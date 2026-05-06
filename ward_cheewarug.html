@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Morning Round — ชีวรักษ์</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',system-ui,sans-serif;background:#ffffff;color:#1a1a18;font-size:14px}
+/* page tabs */
+.page-tabs{display:flex;gap:6px;border-bottom:none;margin-bottom:1.25rem;background:transparent;padding:4px 0}
+.page-tab{padding:8px 18px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#8a92a0;background:transparent;border-top:none;border-left:none;border-right:none;transition:all .15s}
+.page-tab:hover{background:#f0f7ff;border-color:#93c5fd;color:#2563eb}
+.page-tab.active{background:#2563eb;color:#ffffff;border-color:#2563eb;font-weight:600;box-shadow:0 2px 8px rgba(37,99,235,.35)}
+.page-section{display:none}
+.page-section.active{display:block}
+/* admit/classify page */
+.admit-table{width:100%;border-collapse:collapse;font-size:11px;background:#ffffff;border-radius:12px;overflow:hidden}
+.admit-table thead th{padding:7px 10px;text-align:left;color:#8a92a0;font-size:11px;font-weight:500;border-bottom:0.5px solid #e2e4e9;background:#f5f6f8;white-space:nowrap}
+.admit-table tbody tr{border-bottom:0.5px solid #eceef2}
+.admit-table tbody tr:hover{background:#f5f6f8}
+.admit-table tbody td{padding:5px 8px;vertical-align:middle}
+.shift-cell{display:flex;gap:4px;align-items:center}
+.shift-btn{padding:5px 12px;font-size:11px;border-radius:8px;cursor:pointer;border:1.5px solid transparent;font-weight:600;transition:all .15s;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.sb-done{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.sb-done:hover{background:#bbf7d0}
+.sb-done.on{background:#10b981;color:#ffffff;border-color:#10b981;box-shadow:0 2px 6px rgba(16,185,129,.4)}
+.sb-pend{background:#f5f6f8;color:#8a92a0;border-color:#e2e4e9}
+.sb-pend:hover{background:#eceef2}
+.adm-input{font-size:12px;padding:3px 6px;border:0.5px solid #e2e4e9;border-radius:5px;background:#fff;color:#1a1a18;width:100%}
+.adm-select{font-size:12px;padding:3px 6px;border:0.5px solid #e2e4e9;border-radius:5px;background:#fff;color:#1a1a18;width:100%}
+.pt-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:5px;font-weight:500}
+.pt-cri{background:#FCEBEB;color:#A32D2D}
+.pt-cri2{background:#FAEEDA;color:#854F0B}
+.pt-med{background:#E6F1FB;color:#0C447C}
+.pt-lo{background:#EAF3DE;color:#3B6D11}
+.pt-none{background:#f5f6f8;color:#8a92a0}
+.cls-group{background:#ffffff;border:none;border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.cls-group-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f5f6f8;font-size:13px;font-weight:500;color:#1a1a18}
+.cls-group-hdr .cnt{font-size:11px;color:#8a92a0;font-weight:400}
+.cls-table{width:100%;border-collapse:collapse;font-size:12px}
+.cls-table thead th{padding:6px 10px;text-align:left;color:#8a92a0;font-size:11px;font-weight:500;border-bottom:0.5px solid #eceef2;background:#f9f9fb}
+.cls-table tbody tr{border-bottom:0.5px solid #eceef2}
+.cls-table tbody tr:last-child{border-bottom:none}
+.cls-table tbody tr:hover{background:#f5f6f8}
+.cls-table tbody td{padding:7px 10px;vertical-align:middle}
+.cls-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:5px;font-weight:500;white-space:nowrap}
+.cb-hi{background:#FCEBEB;color:#A32D2D}
+.cb-med{background:#FAEEDA;color:#854F0B}
+.cb-lo{background:#EAF3DE;color:#3B6D11}
+.cb-blue{background:#E6F1FB;color:#0C447C}
+.cb-gray{background:#f5f6f8;color:#555}
+.cb-ng{background:#FCEBEB;color:#A32D2D}
+.cb-ok{background:#EAF3DE;color:#3B6D11}
+.cls-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.app{padding:0.75rem;max-width:1100px;margin:auto;background:#e8f4fd}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+h1{font-size:18px;font-weight:700;color:#1e293b}
+.topbar{background:linear-gradient(135deg,#1e3a5f 0%,#1e4d8c 100%);border-radius:14px;padding:14px 20px;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.topbar h1{color:#ffffff;font-size:17px;font-weight:700;margin:0}
+.topbar .tsub{color:#93c5fd;font-size:12px;margin-top:2px}
+.tsub{font-size:12px;color:#6b7480;margin-top:2px}
+.datebar{display:flex;align-items:center;gap:10px;background:#f5f6f8;border-radius:10px;padding:8px 14px;margin-bottom:1rem;flex-wrap:wrap}
+.datebar label{font-size:12px;color:#6b7480;font-weight:500}
+.datebar input[type=date]{font-size:15px;padding:7px 12px;border:1.5px solid #d0d4dc;border-radius:8px;background:#fff;color:#1a1a18;cursor:pointer;font-weight:500}
+.dinfo{font-size:12px;color:#6b7480;margin-left:2px}
+.dinfo strong{color:#1a1a18}
+.day-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.dtab{padding:9px 22px;font-size:15px;border:1.5px solid #e2e8f0;border-radius:9px;cursor:pointer;background:#ffffff;color:#374151;transition:all .15s;font-weight:600}
+.dtab:hover{background:#f0f7ff;border-color:#93c5fd;color:#2563eb;transform:scale(1.02)}
+.dtab.active{background:#2563eb;color:#ffffff;border-color:#2563eb;font-weight:700;box-shadow:0 3px 10px rgba(37,99,235,.4)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.25rem}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+.sc{background:#f5f6f8;border-radius:8px;padding:9px;text-align:center}
+.sc .n{font-size:26px;font-weight:700}.sc .l{font-size:11px;color:#64748b;margin-top:4px;font-weight:500}
+.sc-high{background:#ffffff;border:none;border-left:4px solid #ef4444;border-radius:12px;padding:12px 16px;grid-column:1/-1;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.sc-high .l{font-size:11px;color:#ef4444;margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.beds-wrap{display:flex;flex-wrap:wrap;gap:4px;min-height:22px;align-items:center}
+.bed-chip{display:inline-block;background:#dc2626;color:#ffffff;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:600}
+.no-high{font-size:11px;color:#dc2626;opacity:.5}
+.prog{height:5px;background:#e2e8f0;border-radius:10px;margin-bottom:1.25rem;overflow:hidden}
+.prog .f{height:100%;background:linear-gradient(90deg,#3b82f6,#06b6d4);border-radius:10px;transition:width .4s}
+.filters{display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap;align-items:center}
+.filters select{font-size:12px;padding:4px 7px;border:0.5px solid #e2e4e9;border-radius:6px;background:#fff;color:#1a1a18}
+.btn{padding:5px 12px;border:0.5px solid #d0d4dc;border-radius:6px;background:transparent;color:#1a1a18;font-size:12px;cursor:pointer;transition:background .15s}
+.btn:hover{background:#f5f6f8}
+.btn-blue{background:#2563eb;color:#ffffff;border-color:#2563eb;box-shadow:0 2px 6px rgba(37,99,235,.4)}.btn-blue:hover{background:#1d4ed8}
+.btn-blue:disabled{background:#93c5fd;border-color:#93c5fd;color:#fff;cursor:not-allowed}
+.btn-sm{font-size:11px;padding:3px 9px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{text-align:left;padding:7px 8px;font-weight:500;color:#8a92a0;border-bottom:0.5px solid #e2e4e9;white-space:nowrap;font-size:11px;background:#f5f6f8}
+tbody tr{border-bottom:0.5px solid #eceef2}
+tbody tr:hover{background:#f5f6f8}
+tbody td{padding:6px 8px;vertical-align:middle}
+.bed-b{display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:13px;padding:3px 10px;border-radius:8px;font-weight:700;min-width:34px;text-align:center;box-shadow:0 1px 3px rgba(37,99,235,.2)}
+.rb{display:inline-block;font-size:10px;padding:2px 6px;border-radius:5px;font-weight:500;white-space:nowrap}
+.r-high{background:#fee2e2;color:#dc2626}.r-med{background:#fef3c7;color:#b45309}.r-low{background:#dcfce7;color:#16a34a}
+.abtn{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border:0.5px solid #d0d4dc;border-radius:5px;background:transparent;color:#1a1a18;cursor:pointer;white-space:nowrap;transition:all .15s}
+.abtn:hover{background:#f5f6f8}
+.abtn.done{background:#dcfce7;color:#15803d;border-color:#86efac}
+.abtn.alert{background:#fef3c7;color:#b45309;border-color:#fde68a}
+.abtn.danger{background:#fee2e2;color:#dc2626;border-color:#fca5a5}
+.wband-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border:0.5px solid #d0d4dc;border-radius:5px;background:transparent;color:#1a1a18;cursor:pointer;white-space:nowrap;transition:all .15s}
+.wband-btn:hover{background:#f5f6f8}
+.wband-btn.ok{background:#dcfce7;color:#15803d;border-color:#86efac}
+.wband-btn.ng{background:#fee2e2;color:#dc2626;border-color:#fca5a5}
+.done-row td{opacity:.5}
+.ni{font-size:11px;width:85px;padding:2px 5px;border:0.5px solid #e2e4e9;border-radius:5px;background:#fff;color:#1a1a18}
+.hist-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 1px;vertical-align:middle}
+.modal-bd{position:fixed;inset:0;z-index:10000;-webkit-overflow-scrolling:touch;background:rgba(0,0,0,0.4);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding-top:1rem;overflow-y:auto}
+.modal{background:#fff;border-radius:12px;padding:1.25rem;width:490px;max-width:96vw;border:0.5px solid #e2e4e9;margin-bottom:1rem;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+.modal h3{font-size:14px;font-weight:500;margin-bottom:.2rem}
+.msub{font-size:11px;color:#8a92a0;margin-bottom:.85rem}
+.sbox{border-radius:8px;padding:10px 14px;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between}
+.sbox.x{background:#f5f6f8}.sbox.low{background:#dcfce7}.sbox.med{background:#fef3c7}.sbox.high{background:#fee2e2}
+.sn{font-size:28px;font-weight:500}
+.sbox.x .sn,.sbox.x .srisk{color:#8a92a0}
+.sbox.low .sn,.sbox.low .srisk{color:#15803d}
+.sbox.med .sn,.sbox.med .srisk{color:#b45309}
+.sbox.high .sn,.sbox.high .srisk{color:#dc2626}
+.srisk{font-size:12px;font-weight:500;text-align:right;line-height:1.4}
+.fp{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f5f6f8;border-radius:6px;margin-bottom:.75rem;font-size:11px}
+.fp-bar{flex:1;height:4px;background:#e2e4e9;border-radius:2px;overflow:hidden}
+.fp-fill{height:100%;border-radius:2px;background:#2563eb;transition:width .25s}
+.cbox{border-radius:8px;padding:9px 12px;margin-bottom:.75rem;font-size:11px;line-height:1.7}
+.cbox.med{background:#fef3c7;color:#92400e}.cbox.high{background:#fee2e2;color:#991b1b}
+.cbox strong{display:block;font-weight:500;font-size:12px;margin-bottom:3px}
+.cbox ul{padding-left:14px}
+.fi{display:flex;align-items:center;gap:6px;padding:5px 6px;border-bottom:0.5px solid #eceef2;border-radius:4px}
+.fi:last-child{border-bottom:none}
+.fi.yes{background:#fef2f2;border-bottom-color:transparent;margin-bottom:1px}
+.fi.no{background:#f0fdf4;border-bottom-color:transparent;margin-bottom:1px}
+.fi.err{background:#fffbeb;border-left:3px solid #f59e0b;padding-left:9px;border-bottom-color:transparent;margin-bottom:1px}
+.fnum{font-size:11px;color:#8a92a0;width:18px;flex-shrink:0;font-weight:500}
+.flbl{font-size:12px;flex:1;line-height:1.35}
+.ftog{display:flex;gap:3px;flex-shrink:0}
+.fy,.fn{padding:8px 18px;font-size:14px;border-radius:8px;cursor:pointer;font-weight:600;border:2px solid transparent;transition:all .1s;min-width:60px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fy{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}.fy:hover,.fy:active{background:#F09595}.fy.on{background:#A32D2D;color:#fff;border-color:#A32D2D;box-shadow:0 2px 8px rgba(163,45,45,.4)}
+.fn{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97}.fn:hover,.fn:active{background:#97C459}.fn.on{background:#3B6D11;color:#fff;border-color:#3B6D11;box-shadow:0 2px 8px rgba(59,109,17,.4)}
+.wbox{font-size:11px;color:#A32D2D;background:#FCEBEB;border:0.5px solid #F7C1C1;border-radius:6px;padding:7px 10px;margin-top:8px;display:none}
+.wbox.show{display:block}
+.hist-item{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:#f5f6f8;border-radius:6px;margin-bottom:4px;font-size:11px}
+.wb-toggle{display:flex;gap:8px;margin-top:4px}
+.wb-btn{flex:1;padding:14px 8px;font-size:14px;font-weight:500;border-radius:8px;cursor:pointer;text-align:center;border:1.5px solid transparent;transition:all .15s;user-select:none}
+.wb-ok{background:#dcfce7;color:#15803d;border-color:#86efac}.wb-ok:hover{background:#bbf7d0}.wb-ok.on{background:#16a34a;color:#fff;border-color:#16a34a}
+.wb-ng{background:#fee2e2;color:#dc2626;border-color:#fca5a5}.wb-ng:hover{background:#fecaca}.wb-ng.on{background:#dc2626;color:#fff;border-color:#dc2626}
+.mf{margin-bottom:10px}
+.mf label{font-size:11px;color:#6b7480;display:block;margin-bottom:3px;font-weight:500}
+.mf input,.mf select{width:100%;font-size:12px;padding:5px 7px;border:0.5px solid #e2e4e9;border-radius:6px;background:#fff;color:#1a1a18}
+.r2{display:flex;gap:8px}.r2>*{flex:1}
+.mft{display:flex;gap:8px;justify-content:flex-end;margin-top:.75rem;align-items:center}
+.phg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}
+.pho{padding:6px 8px;border:0.5px solid #e2e4e9;border-radius:6px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s}
+.pho:hover{background:#f5f6f8}
+.pho.p0{background:#dcfce7;color:#15803d;border-color:#86efac;font-weight:600}
+.pho.p1,.pho.p2{background:#fef3c7;color:#b45309;border-color:#fde68a;font-weight:600}
+.pho.p3,.pho.p4{background:#fee2e2;color:#dc2626;border-color:#fca5a5;font-weight:600}
+.leak-wrap{display:flex;gap:8px;margin-top:4px}
+.leak-btn{flex:1;padding:9px 8px;font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;text-align:center;border:1.5px solid transparent;transition:all .15s;user-select:none}
+.lk-no{background:#dcfce7;color:#15803d;border-color:#86efac}.lk-no:hover{background:#bbf7d0}.lk-no.on{background:#16a34a;color:#fff;border-color:#16a34a}
+.lk-yes{background:#fee2e2;color:#dc2626;border-color:#fca5a5}.lk-yes:hover{background:#fecaca}.lk-yes.on{background:#dc2626;color:#fff;border-color:#dc2626}
+.change-info{margin-top:6px;padding:7px 10px;border-radius:6px;font-size:11px;line-height:1.5}
+.ci-ok{background:#f5f6f8;color:#6b7480}
+.ci-today{background:#fef3c7;color:#92400e;border:0.5px solid #fde68a}
+.ci-over{background:#fee2e2;color:#991b1b;border:0.5px solid #fca5a5}
+.section-lbl{font-size:11px;font-weight:500;color:#8a92a0;margin:12px 0 6px;padding-bottom:4px;border-bottom:0.5px solid #eceef2}
+/* export modal */
+/* foley care check items */
+.check-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f5f6f8;border-radius:8px;margin-bottom:8px;gap:12px}
+.check-item .ci-lbl{font-size:12px;flex:1;line-height:1.4}
+.ci-btns{display:flex;gap:6px;flex-shrink:0}
+.ci-yes,.ci-no{padding:5px 14px;font-size:12px;border-radius:6px;cursor:pointer;font-weight:500;border:1.5px solid transparent;transition:all .15s;white-space:nowrap}
+.ci-yes{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97}
+.ci-yes:hover{background:#C0DD97}
+.ci-yes.on{background:#3B6D11;color:#EAF3DE;border-color:#3B6D11}
+.ci-no{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}
+.ci-no:hover{background:#F7C1C1}
+.ci-no.on{background:#A32D2D;color:#FCEBEB;border-color:#A32D2D}
+/* export modal */
+.exp-section{margin-bottom:14px}
+.exp-section h4{font-size:12px;font-weight:500;color:#6b7480;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid #eceef2}
+.exp-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f6f8;border-radius:7px;margin-bottom:6px}
+.exp-row .er-lbl{font-size:13px;color:#1a1a18}
+.exp-row .er-sub{font-size:11px;color:#8a92a0;margin-top:1px}
+/* foley care check items */
+.check-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f5f6f8;border-radius:8px;margin-bottom:8px;gap:12px}
+.check-item .ci-lbl{font-size:12px;flex:1;line-height:1.4}
+.ci-btns{display:flex;gap:6px;flex-shrink:0}
+.ci-yes,.ci-no{padding:5px 14px;font-size:12px;border-radius:6px;cursor:pointer;font-weight:500;border:1.5px solid transparent;transition:all .15s;white-space:nowrap}
+.ci-yes{background:#dcfce7;color:#15803d;border-color:#86efac}.ci-yes:hover{background:#bbf7d0}.ci-yes.on{background:#16a34a;color:#fff;border-color:#16a34a}
+.ci-no{background:#fee2e2;color:#dc2626;border-color:#fca5a5}.ci-no:hover{background:#fecaca}.ci-no.on{background:#dc2626;color:#fff;border-color:#dc2626}
+</style>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCp4MCy20AttZQCl6Von_wjXjVOdR_XTc8",
+      authDomain: "round-3d16d.firebaseapp.com",
+      projectId: "round-3d16d",
+      storageBucket: "round-3d16d.firebasestorage.app",
+      messagingSenderId: "618918009933",
+      appId: "1:618918009933:web:3d23dc54787d85b9005004"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ---- Cloud Storage wrapper — collection: ward_cheewarug ----
+    const COL = 'ward_cheewarug';
+    window.cloudDB = {
+      async get(key) {
+        try {
+          const snap = await getDoc(doc(db, COL, key));
+          return snap.exists() ? snap.data().value : null;
+        } catch(e) { return localStorage.getItem(key); }
+      },
+      async set(key, value) {
+        try {
+          await setDoc(doc(db, COL, key), { value, updatedAt: Date.now() });
+          localStorage.setItem(key, value);
+        } catch(e) { localStorage.setItem(key, value); }
+      },
+      async remove(key) {
+        try {
+          await deleteDoc(doc(db, COL, key));
+          localStorage.removeItem(key);
+        } catch(e) { localStorage.removeItem(key); }
+      },
+      async keys() {
+        try {
+          const snap = await getDocs(collection(db, COL));
+          return snap.docs.map(d => d.id);
+        } catch(e) { return Object.keys(localStorage); }
+      }
+    };
+
+    // ---- โหลดข้อมูลจาก Firestore ครั้งแรก แล้ว sync เข้า localStorage ----
+    try {
+      const initSnap = await getDocs(collection(db, COL));
+      initSnap.forEach(d => {
+        const val = d.data().value;
+        if(val !== undefined) localStorage.setItem(d.id, val);
+      });
+      console.log('ward_cheewarug: initial load', initSnap.size, 'docs');
+    } catch(e) { console.warn('ward_cheewarug: initial load failed', e); }
+
+    // ---- Real-time sync: เมื่อข้อมูลเปลี่ยนจากอุปกรณ์อื่น reload หน้า ----
+    try {
+      let firstSnap = true;
+      onSnapshot(collection(db, COL), (snap) => {
+        if(firstSnap){ firstSnap=false; return; } // ข้าม initial snapshot
+        let changed = false;
+        snap.docChanges().forEach(change => {
+          if(change.type==='added'||change.type==='modified') {
+            const key=change.doc.id, val=change.doc.data().value;
+            if(val !== localStorage.getItem(key)){
+              localStorage.setItem(key, val);
+              changed = true;
+            }
+          }
+          if(change.type==='removed'){
+            localStorage.removeItem(change.doc.id);
+            changed = true;
+          }
+        });
+        // reload ข้อมูลใน memory โดยไม่ refresh หน้า
+        if(changed && typeof P !== 'undefined'){
+          try{
+            var s=localStorage.getItem(window._WARD_STORAGE_KEY);
+            if(s){
+              var saved=JSON.parse(s);
+              P.forEach(function(p){
+                var f=saved.find(function(x){return x.bed===p.bed;});
+                if(f)Object.assign(p,f);
+              });
+              if(typeof render==='function')render();
+              if(typeof renderDash==='function' && document.getElementById('page-dash').classList.contains('active'))renderDash();
+            }
+          }catch(ex){}
+          const el=document.getElementById('sync-status');
+          if(el){el.innerHTML='🔄 Synced';el.style.background='rgba(16,185,129,.7)';el.style.opacity='1';setTimeout(function(){el.style.opacity='0';},2000);}
+        }
+      }, (error) => {
+        console.warn('Firebase sync error:', error.code);
+        const el=document.getElementById('sync-status');
+        if(el){ el.innerHTML='💾 Offline mode'; el.style.background='rgba(245,158,11,.7)'; el.style.opacity='1'; }
+      });
+    } catch(e) { console.warn('onSnapshot failed:', e); }
+
+    // ---- cloudSave: เขียน Firestore ----
+    window.cloudSave = async function(key, value) {
+      localStorage.setItem(key, value);
+      try {
+        await setDoc(doc(db, COL, key), { value, updatedAt: Date.now() });
+      } catch(e) { console.warn('Cloud save failed:', e); }
+    };
+
+    window.cloudReady = true;
+    console.log('Firebase connected ✓');
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Morning Round">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+<div class="app" id="app">
+  <div class="page-tabs">
+  <button class="page-tab active" onclick="switchPage('dash')">&#128202; Dashboard</button>
+  <button class="page-tab" onclick="switchPage('main')">&#128203; Morning Round</button>
+</div>
+
+<div id="page-dash" class="page-section active">
+  <div id="dash-content"></div>
+</div>
+
+<div id="page-main" class="page-section">
+<div class="topbar">
+    <div><h1>&#128203; Morning Round</h1><div class="tsub" id="ward-sub">งานการพยาบาลผู้ป่วยใน</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="openConfig()">&#9881; ตั้งค่าเตียง</button>
+      <button class="btn btn-sm" onclick="doReport()">สรุปรายงาน</button>
+      <button class="btn btn-sm" onclick="openExport()">&#11015; Export</button>
+      <button class="btn btn-sm" onclick="openBackup()" style="border-color:#86efac;color:#16a34a;background:#f0fdf4">&#128190; Backup</button>
+    </div>
+  </div>
+  <div class="datebar">
+    <label>วันที่ประเมิน:</label>
+    <input type="date" id="selDate" onchange="onDateChange()">
+    <div class="dinfo" id="dateInfo"></div>
+    <div style="flex:1"></div>
+    <div class="day-tabs" id="dayTabs"></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="prog" style="display:none"><div class="f" id="pf" style="width:0%"></div></div>
+  <div class="filters">
+    <select id="fS" onchange="render()"><option value="all">ทั้งหมด</option><option value="pending">รอตรวจ</option><option value="done">ตรวจแล้ว</option></select>
+    <select id="fR" onchange="render()"><option value="all">ความเสี่ยงทั้งหมด</option><option value="high">สูง</option><option value="med">ปานกลาง</option><option value="low">ต่ำ</option></select>
+    <select id="fD" onchange="render()"><option value="all">อุปกรณ์ทั้งหมด</option><option value="iv">มี IV</option><option value="foley">มี Foley</option></select>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr>
+        <th style="width:60px">เตียง</th>
+        <th>ชื่อคนไข้</th>
+        <th style="text-align:center">ตั้งค่า</th>
+        <th style="text-align:center">ป้ายข้อมือ</th>
+        <th style="text-align:center">ใบประเมิน<br><span style="font-weight:400">พลัดตกหกล้ม</span></th>
+        <th style="text-align:center">IV Line<br><span style="font-weight:400">Phlebitis/ติด</span></th>
+        <th style="text-align:center">Foley Cath<br><span style="font-weight:400">การดูแล</span></th>
+        <th style="text-align:center">💊 HAD</th>
+        <th style="text-align:center">⚖ ฟ้องร้อง</th>
+        <th style="text-align:center">💳 ค่ารักษา</th>
+        <th>หมายเหตุ</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="empt" style="text-align:center;padding:2rem;color:#8a92a0;font-size:13px;display:none">ไม่พบข้อมูล</div>
+  </div>
+  <div id="mc"></div>
+</div><!-- end page-main -->
+
+
+
+
+<script>
+var ITEMS=['สับสน/มีการเปลี่ยนแปลงการรับรู้','มีความเครียดและวิตกกังวลสูง / ซึมเศร้า','ถ่ายเหลว ปัสสาวะบ่อย','ลื่น สะดุด หกล้มภายใน 3 เดือน','ผู้สูงอายุ > 60 ปี ขึ้นไป','ใช้เครื่องช่วยพยุงเดิน, มีคนช่วยเหลือพยุงลูก/เดิน','งุนงง / หน้ามืด / วิงเวียนศีรษะ','ความบกพร่องในการมองเห็น','มีภาวะซีด Hct < 25%','ได้รับการวินิจฉัยเป็นมะเร็งและได้รับยาเคมี','ได้รับยานอนหลับ, ยาความดัน, ยาขับปัสสาวะ','มีประวัติโรคลมชัก','มีสาย IV, หรือ สาย Foley, สาย Condom'];
+var CM=['ติดสัญลักษณ์/ป้าย Fall Risk','เดินตรวจเยี่ยมอาการทุก 2 ชั่วโมง','สื่อสารข้อมูลความเสี่ยงแก่พยาบาลในช่วงรับ-ส่งเวร','จัดเตียงต่ำ ล็อกล้อเตียง','จัดของใช้จำเป็น/กริ่งเรียกไว้ใกล้มือผู้ป่วย','ช่วยพยุงผู้ป่วยทุกครั้งเมื่อจะลุก/เข้าห้องน้ำ','สอบถามผู้ป่วยเวลาพลิกตะแคงตัวว่าต้องการปัสสาวะหรืออุจจาระ','ประเมินซ้ำทุกเวร หรือเมื่ออาการเปลี่ยน'];
+var CH=['ติดสัญลักษณ์/ป้าย Fall Risk','เดินตรวจเยี่ยมทุก 1 ชั่วโมง','ย้ายเตียงมาอยู่โซนหน้าเคาท์เตอร์','สื่อสารข้อมูลความเสี่ยงแก่ทีมพยาบาลในช่วงรับ-ส่งเวร','จัดเตียงต่ำ ล็อกล้อเตียง','จัดของใช้จำเป็น/กริ่งเรียกไว้ใกล้มือผู้ป่วย','ช่วยพยุงทุกครั้งเมื่อผู้ป่วยจะลุก/เข้าห้องน้ำ','สอบถามผู้ป่วยเวลาพลิกตะแคงตัวว่าต้องการปัสสาวะหรืออุจจาระหรือไม่','ประเมินซ้ำทุกเวร หรือเมื่ออาการเปลี่ยนแปลง'];
+var RL={high:'🔴 เสี่ยงสูง (High fall risk)',med:'🟡 เสี่ยงปานกลาง (Moderate)',low:'🟢 เสี่ยงต่ำ (Low)'};
+var RS={high:'สูง >=6',med:'ปานกลาง 3-5',low:'ต่ำ 0-2'};
+var RB={high:'danger',med:'alert',low:'done'};
+var RC={high:'r-high',med:'r-med',low:'r-low'};
+var RDOT={high:'#E24B4A',med:'#EF9F27',low:'#639922'};
+function fR(s){return s>=6?'high':s>=3?'med':'low';}
+function fSc(a){return a.filter(function(v){return v===true;}).length;}
+function fAn(a){return a.filter(function(v){return v!==null;}).length;}
+function toISO(d){return d.toISOString().split('T')[0];}
+function todayISO(){return toISO(new Date());}
+function thaiDate(iso){if(!iso)return'';var d=new Date(iso+'T00:00:00');return d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});}
+function addDays(iso,n){var d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return toISO(d);}
+function daysDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+
+var curDate=todayISO();
+
+// ---- Ward configuration ----
+var WARD_CONFIG={
+  cheewarug:{
+    id:'cheewarug',
+    name:'หอผู้ป่วยชีวรักษ์',
+    short:'ชีวรักษ์',
+    beds:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+    defaultFoley:[],
+    storageKey:'mr_cheewarug_v2'
+  }
+};
+
+var _wardId='cheewarug';
+var WARD=WARD_CONFIG[_wardId];
+
+var FIXED_BEDS=WARD.beds;
+var DEFAULT_FOLEY=WARD.defaultFoley;
+
+function dayTemplate(iv,foley,cre,crab){return{iv:iv!==undefined?iv:true,foley:foley!==undefined?foley:false,cre:cre!==undefined?cre:false,crab:crab!==undefined?crab:false,f:Array(13).fill(null),fOk:false,wristband:null,wristbandOk:false,iv2:{site:'',sites:['','','',''],insertDate:'',days:'',changeDate:'',leak:null,ph:'-1'},ivOk:false,fo:{insertDate:'',days:'',changeDate:'',totalDays:'',reason:'',necessity:null,secure:null,floor:null,closed:null},foOk:false,had:{flag:false,drugs:[],note:''},lawsuit:{flag:false,reason:'',detail:''},billing:{flag:false,type:'',detail:''},note:''};}
+function getNameFromAdmit(bed,date){
+  // ดึงชื่อจากหน้าแยกประเภทเวรดึกของวันนั้น (หรือวันก่อนหน้าล่าสุด)
+  try{
+    var key='admit_'+bed+'_'+date;
+    var s=localStorage.getItem(key);
+    if(s){var d=JSON.parse(s);if(d.name)return d.name;}
+    // ถ้าไม่มีวันนั้น ลองวันก่อนหน้า
+    var allKeys=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.startsWith('admit_'+bed+'_'))allKeys.push(k);}
+    var past=allKeys.map(function(k){return k.replace('admit_'+bed+'_','');}).filter(function(d2){return d2<=date;}).sort();
+    if(past.length){
+      var ps=localStorage.getItem('admit_'+bed+'_'+past[past.length-1]);
+      if(ps){var pd=JSON.parse(ps);if(pd.name)return pd.name;}
+    }
+  }catch(e){}
+  return '';
+}
+
+function getDay(p,date){
+  if(!p.days[date]){
+    // find most recent past day to inherit from
+    var sorted=Object.keys(p.days).filter(function(d){return d<date;}).sort();
+    var prev=sorted.length?p.days[sorted[sorted.length-1]]:null;
+    if(prev){
+      // inherit equipment flags
+      var iv=prev.iv; var foley=prev.foley; var cre=prev.cre;
+      var d=dayTemplate(iv,foley,cre);
+      // inherit IV2: site, insertDate, changeDate, days — reset ph/leak (ประเมินใหม่ทุกวัน)
+      d.iv2.site=prev.iv2.site||'';
+      d.iv2.sites=prev.iv2.sites&&prev.iv2.sites.length===4?prev.iv2.sites:[prev.iv2.site||'','','',''];
+      d.iv2.insertDate=prev.iv2.insertDate||'';
+      d.iv2.changeDate=prev.iv2.changeDate||'';
+      d.iv2.days=prev.iv2.insertDate?String(Math.max(0,Math.floor((new Date(date+'T00:00:00')-new Date(prev.iv2.insertDate+'T00:00:00'))/86400000))):'';
+      d.iv2.ph='-1';   // รีเซ็ต Phlebitis Grade
+      d.iv2.leak=null; // รีเซ็ต IV ติด/ไม่ติด
+      // inherit Foley: insertDate, changeDate, totalDays, reason, necessity — reset secure/floor/closed (ประเมินใหม่ทุกวัน)
+      d.fo.insertDate=prev.fo.insertDate||'';
+      d.fo.changeDate=prev.fo.changeDate||'';
+      d.fo.reason=prev.fo.reason||'';
+      d.fo.necessity=prev.fo.necessity;
+      d.fo.days=prev.fo.insertDate?String(Math.max(0,Math.floor((new Date(date+'T00:00:00')-new Date(prev.fo.insertDate+'T00:00:00'))/86400000))+1):'';
+      d.fo.totalDays=prev.fo.totalDays||'';
+      d.fo.secure=null;  // รีเซ็ต การดูแล Foley
+      d.fo.floor=null;
+      d.fo.closed=null;
+      // inherit note
+      d.note=prev.note||'';
+      // *** ไม่สืบทอด: f, fOk, wristband, wristbandOk, ivOk, foOk ***
+      // (ค่าเหล่านี้ถูก reset ใน dayTemplate แล้ว)
+      // สืบทอด had/lawsuit/billing flags (คงค้างจนกว่าจะแก้)
+      if(prev.had)d.had={flag:prev.had.flag,drugs:prev.had.drugs?prev.had.drugs.slice():[],note:prev.had.note||''};
+      if(prev.lawsuit)d.lawsuit={flag:prev.lawsuit.flag,reason:prev.lawsuit.reason||'',detail:prev.lawsuit.detail||''};
+      if(prev.billing)d.billing={flag:prev.billing.flag,type:prev.billing.type||'',detail:prev.billing.detail||''};
+      p.days[date]=d;
+    } else {
+      p.days[date]=dayTemplate(p.iv,p.foley,p.cre,p.crab);
+    }
+  }
+  return p.days[date];
+}
+
+function loadData(){
+  // ข้อมูลถูก sync จาก Firestore เข้า localStorage ตอน init แล้ว
+  window._WARD_STORAGE_KEY = WARD.storageKey;
+  try{
+    var s=localStorage.getItem(WARD.storageKey);
+    if(s){
+      var saved=JSON.parse(s);
+      return FIXED_BEDS.map(function(bed){
+        var f=saved.find(function(p){return p.bed===bed;});
+        return f||{id:bed,bed:bed,name:'',iv:true,foley:DEFAULT_FOLEY.indexOf(bed)>=0,cre:false,crab:false,days:{}};
+      });
+    }
+  }catch(e){}
+  return FIXED_BEDS.map(function(bed){return{id:bed,bed:bed,name:'',iv:true,foley:DEFAULT_FOLEY.indexOf(bed)>=0,cre:false,crab:false,days:{}};});
+}
+function saveData(){
+  var json=JSON.stringify(P);
+  localStorage.setItem(WARD.storageKey,json);
+  if(window.cloudSave){
+    window.cloudSave(WARD.storageKey, json);
+  }
+}
+
+var P=loadData();
+var curPh=null,curU=null,curLeak=null,curWB=null;
+
+function isDone(p,date){var d=getDay(p,date);return d.wristbandOk&&d.fOk&&(!d.iv||d.ivOk)&&(!d.foley||d.foOk);}
+
+function initDateBar(){document.getElementById('selDate').value=curDate;renderDateInfo();renderDayTabs();}
+function onDateChange(){curDate=document.getElementById('selDate').value||todayISO();renderDateInfo();renderDayTabs();render();}
+function renderDateInfo(){var t=curDate===todayISO();document.getElementById('dateInfo').innerHTML='<strong>'+thaiDate(curDate)+'</strong>'+(t?' <span style="color:#3B6D11;font-size:10px">(วันนี้)</span>':'');}
+function renderDayTabs(){
+  var s={};s[todayISO()]=1;s[curDate]=1;
+  P.forEach(function(p){Object.keys(p.days).forEach(function(d){s[d]=1;});});
+  var dates=Object.keys(s).sort().slice(-7);
+  document.getElementById('dayTabs').innerHTML=dates.map(function(d){return'<button class="dtab'+(d===curDate?' active':'')+'" onclick="selectDate(\''+d+'\')">'+thaiDate(d)+'</button>';}).join('');
+}
+function selectDate(d){curDate=d;document.getElementById('selDate').value=d;renderDateInfo();renderDayTabs();render();}
+
+function renderStats(){
+  var tot=P.length,done=P.filter(function(p){return isDone(p,curDate);}).length;
+  var pct=tot?Math.round(done/tot*100):0;
+  // High fall risk
+  var hiPats=P.filter(function(p){var d=getDay(p,curDate);return d.fOk&&fR(fSc(d.f))==='high';});
+  var hiBeds=hiPats.length?hiPats.map(function(p){return'<span class="bed-chip">'+p.bed+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  // Phlebitis >=2 beds
+  var phPats=P.filter(function(p){var d=getDay(p,curDate);return d.iv&&d.ivOk&&parseInt(d.iv2.ph||0)>=2;});
+  var phBeds=phPats.length?phPats.map(function(p){var d=getDay(p,curDate);return'<span style="display:inline-block;background:#FCEBEB;color:#A32D2D;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:500;margin:1px">'+p.bed+' (Gr.'+d.iv2.ph+')</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  // Wristband NG beds
+  var wbngPats=P.filter(function(p){var d=getDay(p,curDate);return d.wristbandOk&&d.wristband===false;});
+  var wbngBeds=wbngPats.length?wbngPats.map(function(p){return'<span class="bed-chip">'+p.bed+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  // Foley beds (all, color by change date)
+  var foleyPats=P.filter(function(p){var d=getDay(p,curDate);return d.foley;});
+  var foleyBeds=foleyPats.length?foleyPats.map(function(p){
+    var d=getDay(p,curDate).fo;var cd=d.changeDate;
+    var color='#0C447C';var bg='#E6F1FB';
+    if(cd){var diff=daysDiff(curDate,cd);if(diff<0){color='#A32D2D';bg='#FCEBEB';}else if(diff<=1){color='#854F0B';bg='#FAEEDA';}}
+    return'<span style="display:inline-block;background:'+bg+';color:'+color+';font-size:11px;padding:2px 8px;border-radius:5px;font-weight:500;margin:1px">'+p.bed+'</span>';
+  }).join(''):'<span class="no-high">ไม่มี</span>';
+  // Foley หมดความจำเป็น
+  var foNecPats=P.filter(function(p){var d=getDay(p,curDate);return d.foley&&d.foOk&&d.fo.necessity===false;});
+  var foNecBeds=foNecPats.length?foNecPats.map(function(p){return'<span class="bed-chip">'+p.bed+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  // Foley ครบเปลี่ยน (changeDate <= today)
+  var foChgPats=P.filter(function(p){var d=getDay(p,curDate);return d.foley&&d.fo.changeDate&&daysDiff(curDate,d.fo.changeDate)<=0;});
+  var foChgBeds=foChgPats.length?foChgPats.map(function(p){var d=getDay(p,curDate);var diff=daysDiff(curDate,d.fo.changeDate);return'<span style="display:inline-block;background:#FCEBEB;color:#A32D2D;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:500;margin:1px">'+p.bed+(diff<0?' (เลย '+Math.abs(diff)+' วัน)':' (ครบวันนี้)')+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  // CRE beds
+  var crePats=P.filter(function(p){var d=getDay(p,curDate);return d.cre;});
+  var creBeds=crePats.length?crePats.map(function(p){return'<span style="display:inline-block;background:#F0997B;color:#4A1B0C;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:500;margin:1px">'+p.bed+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+  var crabPats=P.filter(function(p){var d=getDay(p,curDate);return d.crab;});
+  var crabBeds=crabPats.length?crabPats.map(function(p){return'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:11px;padding:2px 8px;border-radius:5px;font-weight:500;margin:1px">'+p.bed+'</span>';}).join(''):'<span class="no-high">ไม่มี</span>';
+
+  document.getElementById('stats').innerHTML=
+    '<div class="sc" style="border-top:4px solid #3b82f6"><div class="n" style="color:#1e40af">'+tot+'</div><div class="l">ทั้งหมด</div></div>'
+    +'<div class="sc" style="border-top:4px solid #10b981"><div class="n" style="color:#065f46">'+done+'</div><div class="l">ตรวจแล้ว</div></div>'
+    +'<div class="sc" style="border-top:4px solid #f59e0b"><div class="n" style="color:#92400e">'+(tot-done)+'</div><div class="l">รอตรวจ</div></div>'
+    +'<div class="sc" style="border-top:4px solid #ef4444"><div class="n" style="color:#991b1b">'+phPats.length+'</div><div class="l">Phlebitis >=2</div></div>'
+    +'<div class="sc-high" style="border-left-color:#ef4444"><div class="l" style="color:#ef4444">&#9888; เตียงเสี่ยงสูง (Falling >=6 ข้อ)</div><div class="beds-wrap">'+hiBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#f59e0b;background:#fffbeb"><div class="l" style="color:#b45309">&#128137; Phlebitis Grade >=2</div><div class="beds-wrap">'+phBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#8b5cf6;background:#faf5ff"><div class="l" style="color:#7c3aed">&#127991; ป้ายข้อมือผิด/หาย</div><div class="beds-wrap">'+wbngBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#06b6d4;background:#ecfeff"><div class="l" style="color:#0891b2">&#128167; เตียงที่ใส่ Foley</div><div class="beds-wrap">'+foleyBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#ef4444;background:#fff5f5"><div class="l" style="color:#dc2626">&#128680; Foley หมดความจำเป็น</div><div class="beds-wrap">'+foNecBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#f59e0b;background:#fffbeb"><div class="l" style="color:#d97706">&#8987; Foley ครบกำหนดเปลี่ยน</div><div class="beds-wrap">'+foChgBeds+'</div></div>'
+    +'<div class="sc-high" style="border-left-color:#ec4899;background:#fdf2f8"><div class="l" style="color:#db2777">&#9888; เตียง CRE</div><div class="beds-wrap">'+creBeds+'</div></div>'
+    +(crabPats.length?'<div class="sc-high" style="border-left-color:#7c3aed;background:#faf5ff"><div class="l" style="color:#7c3aed">&#9888; เตียง CRAB</div><div class="beds-wrap">'+crabBeds+'</div></div>':'');
+  document.getElementById('pf').style.width=pct+'%';
+}
+
+function histDots(p){
+  var dates=Object.keys(p.days).filter(function(d){return p.days[d].fOk;}).sort().slice(-7);
+  if(!dates.length)return'<span style="font-size:10px;color:#8a92a0">—</span>';
+  return dates.map(function(d){var sc=fSc(p.days[d].f),r=fR(sc);return'<span class="hist-dot" style="background:'+RDOT[r]+'" title="'+thaiDate(d)+': '+sc+' ข้อ ('+RS[r]+')"></span>';}).join('');
+}
+
+function getFiltered(){
+  var fs=document.getElementById('fS').value,fr=document.getElementById('fR').value,fd=document.getElementById('fD').value;
+  return P.filter(function(p){
+    var d=getDay(p,curDate);
+    if(fs==='done'&&!isDone(p,curDate))return false;
+    if(fs==='pending'&&isDone(p,curDate))return false;
+    if(fr!=='all'){var r=d.fOk?fR(fSc(d.f)):'low';if(r!==fr)return false;}
+    if(fd==='iv'&&!d.iv)return false;
+    if(fd==='foley'&&!d.foley)return false;
+    return true;
+  });
+}
+
+function ivBtnInfo(p,d){
+  var ph=parseInt(d.iv2.ph||0),leak=d.iv2.leak;
+  var txt='&#10003; IV';
+  if(ph>0)txt+=' Gr.'+ph;
+  if(d.iv2.site)txt+=' ('+d.iv2.site+')';
+  if(leak===true)txt+=' &#9888; ติด';
+  if(d.iv2.changeDate){var diff=daysDiff(curDate,d.iv2.changeDate);if(diff<0)txt+=' 🔴ค้างเปลี่ยน';else if(diff===0)txt+=' 🟡ครบวันนี้';}
+  return{txt:txt,cls:ph>=2||leak===true?'danger':ph>=1?'alert':'done'};
+}
+
+function render(){
+  renderStats();renderDayTabs();
+  var list=getFiltered();
+  var tbody=document.getElementById('tbody');
+  document.getElementById('empt').style.display=list.length?'none':'block';
+  if(!list.length){tbody.innerHTML='';return;}
+  tbody.innerHTML=list.map(function(p){
+    var d=getDay(p,curDate),sc=fSc(d.f),ans=fAn(d.f),risk=d.fOk?fR(sc):null,done=isDone(p,curDate);
+    var wbb=!d.wristbandOk?'<button class="wband-btn" onclick="openWB('+p.id+')">🏷 ตรวจป้าย</button>':d.wristband===true?'<button class="wband-btn ok" onclick="openWB('+p.id+')">&#10003; ป้ายถูก</button>':'<button class="wband-btn ng" onclick="openWB('+p.id+')">&#9888; ป้ายผิด/หาย</button>';
+    var fb=!d.fOk&&ans===0?'<button class="abtn" onclick="openF('+p.id+')">📋 ประเมิน</button>':!d.fOk&&ans>0?'<button class="abtn alert" onclick="openF('+p.id+')">📋 ค้าง '+ans+'/13</button>':'<button class="abtn '+RB[risk]+'" onclick="openF('+p.id+')">&#10003; '+sc+'/13 <span class="rb '+RC[risk]+'" style="margin-left:2px">'+RS[risk]+'</span></button>';
+    var ib=!d.iv?'<span style="color:#8a92a0;font-size:11px">—</span>':!d.ivOk?'<button class="abtn" onclick="openIV('+p.id+')">💉 ตรวจ IV</button>':(function(){
+  var r=ivBtnInfo(p,d);
+  var cdTxt='';
+  if(d.iv2.changeDate){var diff=daysDiff(curDate,d.iv2.changeDate);var cdStyle=diff<0?'color:#A32D2D':diff<=1?'color:#854F0B':'color:#3B6D11';cdTxt='<br><span style="font-size:10px;'+cdStyle+'">เปลี่ยน '+thaiDate(d.iv2.changeDate)+'</span>';}
+  return'<button class="abtn '+r.cls+'" onclick="openIV('+p.id+')" style="flex-direction:column;align-items:flex-start;line-height:1.3">'+r.txt+cdTxt+'</button>';
+})();
+    var fb2=!d.foley?'<span style="color:#8a92a0;font-size:11px">—</span>':!d.foOk?'<button class="abtn" onclick="openFo('+p.id+')">🫧 ตรวจ Foley</button>':(function(){var ng=d.fo.secure===false||d.fo.floor===false||d.fo.closed===false;var nec=d.fo.necessity===false;
+  var cdTxtFo='';if(d.fo.changeDate){var diffFo=daysDiff(curDate,d.fo.changeDate);var cdsFo=diffFo<0?'color:#A32D2D':diffFo<=1?'color:#854F0B':'color:#3B6D11';cdTxtFo='<br><span style="font-size:10px;'+cdsFo+'">เปลี่ยน '+thaiDate(d.fo.changeDate)+'</span>';}
+  return'<button class="abtn '+(nec?'danger':ng?'alert':'done')+'" onclick="openFo('+p.id+')" style="flex-direction:column;align-items:flex-start;line-height:1.3">&#10003; Foley'+(nec?' &#9888; หมดความจำเป็น':ng?' &#9888; ไม่ปฏิบัติ':'')+cdTxtFo+'</button>';})();
+    var cfgBtn='<button class="abtn" style="font-size:10px;padding:2px 8px" onclick="openBedConfig('+p.id+')">&#9881; ตั้งค่า</button>';
+    var hadb=(function(){var had=d.had||{flag:false,drugs:[]};if(!had.flag&&!(had.drugs&&had.drugs.length))return'<button class="abtn" onclick="openHAD('+p.id+')">💊 บันทึก HAD</button>';return'<button class="abtn danger" onclick="openHAD('+p.id+')">⚠ มียา HAD</button>';})();
+    var lsb=(function(){var ls=d.lawsuit||{flag:false};if(!ls.flag)return'<button class="abtn" onclick="openLawsuit('+p.id+')">⚖ บันทึก</button>';return'<button class="abtn danger" onclick="openLawsuit('+p.id+')" style="flex-direction:column;align-items:flex-start;line-height:1.4">⚠ เสี่ยงฟ้อง<br><span style="font-size:10px;font-weight:400">'+(ls.reason||'—')+'</span></button>';})();
+    var blb=(function(){var bl=d.billing||{flag:false};if(!bl.flag)return'<button class="abtn" onclick="openBilling('+p.id+')">💳 บันทึก</button>';return'<button class="abtn alert" onclick="openBilling('+p.id+')" style="flex-direction:column;align-items:flex-start;line-height:1.4;background:#EDE9FE;color:#5b21b6;border-color:#c4b5fd">⚠ ค่ารักษา<br><span style="font-size:10px;font-weight:400">'+(bl.type||'—')+'</span></button>';})();
+return'<tr class="'+(done?'done-row':'')+'" id="row-'+p.id+'"><td><span class="bed-b">'+p.bed+'</span></td><td style="font-size:12px;white-space:nowrap;color:#1a1a18">'+(getNameFromAdmit(p.bed,curDate)||p.name||'<span style="color:#b8bec8;font-size:11px">—</span>')+'</td><td style="text-align:center">'+cfgBtn+'</td><td style="text-align:center">'+wbb+'</td><td style="text-align:center">'+fb+'</td><td style="text-align:center">'+ib+'</td><td style="text-align:center">'+fb2+'</td><td style="text-align:center">'+hadb+'</td><td style="text-align:center">'+lsb+'</td><td style="text-align:center">'+blb+'</td><td><input class="ni" value="'+d.note+'" placeholder="บันทึก..." onchange="setN('+p.id+',this.value)"></td></tr>';
+  }).join('');
+}
+function setN(id,v){var p=P.find(function(x){return x.id===id;});if(p){getDay(p,curDate).note=v;saveData();}}
+
+// CONFIG
+function openConfig(){
+  var rows=P.map(function(p){return'<tr style="border-bottom:0.5px solid #eceef2"><td style="padding:5px 8px"><span class="bed-b" style="font-size:12px">'+p.bed+'</span></td><td style="text-align:center;padding:5px 8px"><input type="checkbox" id="ci'+p.id+'" '+(p.iv?'checked':'')+' style="width:16px;height:16px;accent-color:#185FA5"></td><td style="text-align:center;padding:5px 8px"><input type="checkbox" id="cf'+p.id+'" '+(p.foley?'checked':'')+' style="width:16px;height:16px;accent-color:#185FA5"></td><td style="text-align:center;padding:5px 8px"><input type="checkbox" id="cc'+p.id+'" '+(p.cre?'checked':'')+' style="width:16px;height:16px;accent-color:#854F0B"></td><td style="text-align:center;padding:5px 8px"><input type="checkbox" id="cc2'+p.id+'" '+(p.crab?'checked':'')+' style="width:16px;height:16px;accent-color:#7c3aed"></td></tr>';}).join('');
+  showModal('<h3>ตั้งค่าเตียง</h3><div class="msub">เลือก IV, Foley และ CRE รายเตียง</div><div style="max-height:55vh;overflow-y:auto"><table style="width:100%;font-size:12px;border-collapse:collapse"><thead><tr><th style="padding:5px 8px;text-align:left;background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">เตียง</th><th style="padding:5px 8px;text-align:center;background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">IV</th><th style="padding:5px 8px;text-align:center;background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">Foley</th><th style="padding:5px 8px;text-align:center;background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">CRE</th><th style="padding:5px 8px;text-align:center;background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">CRAB</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn btn-blue" onclick="saveConfig()">บันทึก</button></div>');
+}
+function saveConfig(){P.forEach(function(p){p.iv=document.getElementById('ci'+p.id).checked;p.foley=document.getElementById('cf'+p.id).checked;p.cre=document.getElementById('cc'+p.id).checked;p.crab=document.getElementById('cc2'+p.id).checked;});saveData();closeModal();render();}
+
+function openBedConfig(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  showModal(
+    '<h3>ตั้งค่าเตียง '+p.bed+'</h3>'
+    +'<div class="msub">'+thaiDate(curDate)+' — ข้อมูลจะมีผลเฉพาะวันนี้เป็นต้นไป</div>'
+    +'<div class="mf"><label style="font-size:11px;color:#6b7480;font-weight:500;display:block;margin-bottom:3px">ชื่อคนไข้ (ไม่ต้องใส่นามสกุล)</label>'
+    +'<input type="text" id="bc-name" value="'+(p.name||'')+'" placeholder="เช่น สมชาย" style="width:100%;font-size:13px;padding:6px 8px;border:0.5px solid #e2e4e9;border-radius:6px;background:#fff"></div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px;padding:4px 0">'
+    +'<label style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f5f6f8;border-radius:8px;font-size:13px;cursor:pointer">'
+    +'<span>💉 มี IV Line</span>'
+    +'<input type="checkbox" id="bc-iv" '+(d.iv?'checked':'')+' style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer">'
+    +'</label>'
+    +'<label style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f5f6f8;border-radius:8px;font-size:13px;cursor:pointer">'
+    +'<span>🫧 มี Foley Catheter</span>'
+    +'<input type="checkbox" id="bc-fo" '+(d.foley?'checked':'')+' style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer">'
+    +'</label>'
+    +'<label style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#FAEEDA;border-radius:8px;font-size:13px;cursor:pointer">'
+    +'<span>⚠ CRE</span>'
+    +'<input type="checkbox" id="bc-cre" '+(d.cre?'checked':'')+' style="width:18px;height:18px;accent-color:#854F0B;cursor:pointer">'
+    +'</label>'
+    +'<label style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#faf5ff;border-radius:8px;font-size:13px;cursor:pointer">'
+    +'<span>&#9888; CRAB</span>'
+    +'<input type="checkbox" id="bc-crab" '+(d.crab?'checked':'')+' style="width:18px;height:18px;accent-color:#7c3aed;cursor:pointer">'
+    +'</label>'
+    +'<div style="margin-top:8px;padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:11px;color:#16a34a">🖊 ข้อมูล HAD / ฟ้องร้อง / ค่ารักษา — บันทึกในคอลัมน์ Morning Round</div>'
+    +'</div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn btn-blue" onclick="saveBedConfig('+id+')">บันทึก</button></div>'
+  );
+}
+
+function saveBedConfig(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  p.name=(document.getElementById('bc-name').value||'').trim();
+  var d=getDay(p,curDate);
+  d.iv=document.getElementById('bc-iv').checked;
+  d.foley=document.getElementById('bc-fo').checked;
+  d.cre=document.getElementById('bc-cre').checked;d.crab=document.getElementById('bc-crab').checked;
+  // also update p defaults for future days
+  p.iv=d.iv;p.foley=d.foley;p.cre=d.cre;
+  // if iv/foley turned off, clear the ok flags for today
+  if(!d.iv){d.ivOk=false;}
+  if(!d.foley){d.foOk=false;}
+  saveData();closeModal();render();
+}
+
+// WRISTBAND
+function openWB(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);curWB=d.wristband;
+  showModal('<h3>ตรวจป้ายข้อมือ</h3><div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div><div style="background:#f5f6f8;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:#6b7480;line-height:1.7">ตรวจสอบ: ชื่อ-นามสกุล, HN, วันเกิด ครบถ้วน<br>และป้ายอยู่ในสภาพพร้อมใช้งาน</div><div class="mf"><label>ผลการตรวจป้ายข้อมือ</label><div class="wb-toggle"><div class="wb-btn wb-ok'+(d.wristband===true?' on':'')+'" id="wbOk" onclick="selWB(true)">&#10003; ถูกต้อง</div><div class="wb-btn wb-ng'+(d.wristband===false?' on':'')+'" id="wbNg" onclick="selWB(false)">&#10005; ผิด / หาย / ชำรุด</div></div></div><div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn" onclick="clrWB('+id+')">ล้างค่า</button><button class="btn btn-blue" onclick="saveWB('+id+')">บันทึก</button></div>');
+}
+function selWB(val){curWB=val;var ok=document.getElementById('wbOk'),ng=document.getElementById('wbNg');if(ok)ok.className='wb-btn wb-ok'+(val===true?' on':'');if(ng)ng.className='wb-btn wb-ng'+(val===false?' on':'');}
+function saveWB(id){var p=P.find(function(x){return x.id===id;});if(!p)return;if(curWB===null){alert('กรุณาเลือกผลการตรวจ');return;}var d=getDay(p,curDate);d.wristband=curWB;d.wristbandOk=true;curWB=null;saveData();closeModal();render();}
+function clrWB(id){var p=P.find(function(x){return x.id===id;});if(!p)return;var d=getDay(p,curDate);d.wristband=null;d.wristbandOk=false;curWB=null;saveData();closeModal();render();}
+
+// FALLING
+function openF(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate),sc=fSc(d.f),ans=fAn(d.f),all=ans===13,risk=all?fR(sc):'x';
+  var care=risk==='high'?CH:risk==='med'?CM:[];
+  var items=ITEMS.map(function(lbl,i){var v=d.f[i];return'<div class="fi '+(v===true?'yes':v===false?'no':'')+'" id="fi'+id+'_'+i+'"><span class="fnum">'+(i+1)+'.</span><span class="flbl">'+lbl+'</span><div class="ftog"><button type="button" class="fy'+(v===true?' on':'')+'" onclick="tF('+id+','+i+',true)">ใช่</button><button type="button" class="fn'+(v===false?' on':'')+'" onclick="tF('+id+','+i+',false)">ไม่ใช่</button></div></div>';}).join('');;
+  showModal('<h3>ใบประเมินความเสี่ยงพลัดตกหกล้ม</h3><div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div><div class="sbox '+(all?risk:'x')+'" id="sb"><div><div style="font-size:11px;opacity:.7;margin-bottom:2px">คะแนนรวม (ข้อที่ตอบ ใช่)</div><div class="sn" id="fsc">'+sc+' <span style="font-size:15px;font-weight:400">/ 13</span></div><div style="font-size:10px;opacity:.6;margin-top:2px">0-2 ต่ำ | 3-5 ปานกลาง | >=6 สูง</div></div><div class="srisk" id="frisk">'+(all?RL[risk]:'กรุณาตอบให้ครบทุกข้อ')+'</div></div><div class="fp"><span style="color:#8a92a0">ตอบแล้ว</span><div class="fp-bar"><div class="fp-fill" id="fpf" style="width:'+Math.round(ans/13*100)+'%"></div></div><span style="font-weight:500;min-width:36px;text-align:right" id="fpcnt">'+ans+' / 13</span></div><div id="cb">'+(all&&care.length?'<div class="cbox '+risk+'"><strong>แนวทางการดูแล</strong><ul>'+care.map(function(c){return'<li>'+c+'</li>';}).join('')+'</ul></div>':'')+'</div><div id="fil">'+items+'</div><div id="wbox" class="wbox">&#9888; กรุณาตอบทุกข้อก่อนบันทึก — ยังเหลืออีก <strong id="wcnt">'+(13-ans)+'</strong> ข้อ</div><div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn" onclick="clrF('+id+')">ล้างค่า</button><button class="btn btn-blue" id="saveF" onclick="saveF('+id+')" '+(all?'':'disabled')+'>บันทึก</button></div>');
+}
+  
+function tF(id,i,val){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;var d=getDay(p,curDate);
+  d.f[i]=d.f[i]===val?null:val;
+  var row=document.getElementById('fi'+id+'_'+i);
+  if(row){row.className='fi '+(d.f[i]===true?'yes':d.f[i]===false?'no':'');row.classList.remove('err');var bs=row.querySelectorAll('.fy,.fn');if(bs[0])bs[0].className='fy'+(d.f[i]===true?' on':'');if(bs[1])bs[1].className='fn'+(d.f[i]===false?' on':'');}
+  var sc=fSc(d.f),ans=fAn(d.f),all=ans===13,risk=all?fR(sc):'x';var care=risk==='high'?CH:risk==='med'?CM:[];
+  var sb=document.getElementById('sb');if(sb)sb.className='sbox '+(all?risk:'x');
+  var fsc=document.getElementById('fsc');if(fsc)fsc.innerHTML=sc+' <span style="font-size:15px;font-weight:400">/ 13</span>';
+  var frisk=document.getElementById('frisk');if(frisk)frisk.textContent=all?RL[risk]:'กรุณาตอบให้ครบทุกข้อ';
+  var fpf=document.getElementById('fpf');if(fpf)fpf.style.width=Math.round(ans/13*100)+'%';
+  var fpcnt=document.getElementById('fpcnt');if(fpcnt)fpcnt.textContent=ans+' / 13';
+  var sfb=document.getElementById('saveF');if(sfb)sfb.disabled=!all;
+  var wb=document.getElementById('wbox');if(wb&&all)wb.classList.remove('show');
+  var cb=document.getElementById('cb');if(cb)cb.innerHTML=all&&care.length?'<div class="cbox '+risk+'"><strong>แนวทางการดูแล</strong><ul>'+care.map(function(c){return'<li>'+c+'</li>';}).join('')+'</ul></div>':'';
+}
+function saveF(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;var d=getDay(p,curDate);var ans=fAn(d.f);
+  if(ans<13){
+    ITEMS.forEach(function(_,i){if(d.f[i]===null){var r=document.getElementById('fi'+id+'_'+i);if(r)r.className='fi err';}});
+    var wb=document.getElementById('wbox'),wc=document.getElementById('wcnt');
+    if(wc)wc.textContent=13-ans;if(wb)wb.classList.add('show');
+    var first=document.querySelector('.fi.err');
+    if(first)setTimeout(function(){first.scrollIntoView({behavior:'smooth',block:'center'});},50);
+    return;
+  }
+  d.fOk=true;saveData();closeModal();render();
+}
+function clrF(id){var p=P.find(function(x){return x.id===id;});if(p){var d=getDay(p,curDate);d.f=Array(13).fill(null);d.fOk=false;saveData();}closeModal();render();}
+
+// IV
+var IVS=['หลังมือ L','หลังมือ R','ข้อพับแขน L','ข้อพับแขน R','ข้อมือ L','ข้อมือ R','ปลายแขน L','ปลายแขน R','PICC','Central line'];
+var PHD=[
+  {g:0,l:'Grade 0',s:'p0',desc:'No symptoms — ไม่มีอาการ'},
+  {g:1,l:'Grade 1',s:'p1',desc:'Erythema at access site with or without pain — แดงรอบรอยเข็ม มีอาการปวดหรือไม่ก็ได้'},
+  {g:2,l:'Grade 2',s:'p2',desc:'Pain at access site with erythema and/or edema — ปวดและแดงรอบรอยเข็ม บวมหรือไม่บวมก็ได้'},
+  {g:3,l:'Grade 3',s:'p3',desc:'Pain at access site with erythema, Streak formation, Palpable venous cord — ปวดรอบรอยเข็มร่วมกับแดง มีรอยแดงเป็นทาง คลำได้หลอดเลือดแข็ง'},
+  {g:4,l:'Grade 4',s:'p4',desc:'Pain at access site with erythema, Streak formation, Palpable venous cord >1 inch, Purulent discharge — ปวด แดง มีรอยแดงเป็นทางยาว คลำได้หลอดเลือดแข็ง มีหนอง'}
+];
+function cdInfo(cd){if(!cd)return'';var diff=daysDiff(curDate,cd);if(diff<0)return'<div class="change-info ci-over">🔴 เลยกำหนดเปลี่ยน '+Math.abs(diff)+' วันแล้ว (ครบเมื่อ '+thaiDate(cd)+')</div>';if(diff===0)return'<div class="change-info ci-today">🟡 ครบกำหนดเปลี่ยนวันนี้</div>';if(diff<=1)return'<div class="change-info ci-today">🟡 ใกล้ครบกำหนด เหลืออีก '+diff+' วัน ('+thaiDate(cd)+')</div>';return'<div class="change-info ci-ok">🟢 ครบกำหนดเปลี่ยน: '+thaiDate(cd)+' (อีก '+diff+' วัน)</div>';}
+function openIV(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;var _chk=getDay(p,curDate);if(!_chk.iv)return;
+  var d=getDay(p,curDate),iv=d.iv2;curPh=iv.ph;curLeak=iv.leak;
+  var cd=iv.changeDate||(iv.insertDate?addDays(iv.insertDate,4):'');
+  showModal('<h3>ตรวจ IV Line</h3><div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div><div class="section-lbl">ข้อมูลสาย Iตำแหน่งแทง (Site) — สูงสุด 4 ตำแหน่ง</label>'+(function(){var _sites=iv.sites&&iv.sites.length===4?iv.sites:(iv.site?[iv.site,'','','']:['','','','']);return _sites.map(function(sv,i){var _opts='<option value=\"\">'+(i+1)+'. -- เลือก --</option>'+IVS.map(function(s){return'<option value=\"'+s+'\" '+(sv===s?'selected':'')+'>'+s+'</option>';}).join('')+'<option value=\"อื่นๆ\" '+(sv&&IVS.indexOf(sv)<0?'selected':'')+'>อื่นๆ</option>';return'<div style=\"display:flex;align-items:center;gap:6px;margin-bottom:5px\"><span style=\"font-size:10px;color:#94a3b8;min-width:14px;font-weight:700\">'+( i+1)+'.</span><select id=\"ivs'+i+'\" style=\"flex:1;font-size:12px;padding:5px 8px;border:1px solid #e2e8f0;border-radius:8px\">'+_opts+'</select></div>';}).join('');})()+'</div><div class="mf r2"><div><label>วันที่แทง</label><input type="date" id="ivdt" value="'+iv.insertDate+'" onchange="onIVdc()"></div><div><label>จำนวนวัน</label><input type="number" id="ivdy" min="0" value="'+iv.days+'" readonly style="background:#f5f6f8"></div></div><div class="mf"><label>วันครบเปลี่ยน IV</label><input type="date" id="ivcd" value="'+cd+'" oninput="updCD()"><div id="cdi">'+cdInfo(cd)+'</div></div><div class="section-lbl">สภาพสาย IV</div><div class="mf"><label>Phlebitis Grade</label><div class="phg">'+PHD.map(function(ph){
+  var active=String(iv.ph)===String(ph.g);
+  var bg=active?(ph.s==='p0'?'#dcfce7':ph.s==='p1'||ph.s==='p2'?'#fef3c7':'#fee2e2'):'#f8fafc';
+  var bdr=active?(ph.s==='p0'?'#86efac':ph.s==='p1'||ph.s==='p2'?'#fde68a':'#fca5a5'):'#e2e8f0';
+  var col=active?(ph.s==='p0'?'#15803d':ph.s==='p1'||ph.s==='p2'?'#b45309':'#dc2626'):'#374151';
+  return'<div class="pho'+(active?' '+ph.s:'')+'" onclick="sPh(this,'+ph.g+',\''+ph.s+'\');return false;" style="text-align:left;padding:8px 12px;background:'+bg+';border-color:'+bdr+';color:'+col+'">'
+    +'<div style="font-weight:700;font-size:12px">'+ph.l+'</div>'
+    +'<div style="font-size:11px;margin-top:2px;opacity:.85">'+ph.desc+'</div>'
+    +'</div>';
+}).join('')+'</div></div><div class="mf"><label>IV ติด / ไม่ติด</label><div class="leak-wrap"><div class="leak-btn lk-no'+(iv.leak===false?' on':'')+'" id="lkNo" onclick="selLeak(false)">ไม่ติด</div><div class="leak-btn lk-yes'+(iv.leak===true?' on':'')+'" id="lkYes" onclick="selLeak(true)">ติด</div></div></div><div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn btn-blue" onclick="svIV('+id+')">บันทึก</button></div>');
+}
+function onIVdc(){var v=document.getElementById('ivdt').value;if(v){var days=Math.max(0,Math.floor((new Date(curDate+'T00:00:00')-new Date(v+'T00:00:00'))/86400000));var e=document.getElementById('ivdy');if(e)e.value=days;var ec=document.getElementById('ivcd');if(ec&&!ec.value){ec.value=addDays(v,4);}updCD();}}
+function updCD(){var c=document.getElementById('ivcd'),i=document.getElementById('cdi');if(c&&i)i.innerHTML=cdInfo(c.value);}
+function sPh(el,g,s){curPh=String(g);document.querySelectorAll('.pho').forEach(function(e){e.className='pho';});el.className='pho '+s;}
+function selLeak(val){curLeak=val;var no=document.getElementById('lkNo'),yes=document.getElementById('lkYes');if(no)no.className='leak-btn lk-no'+(val===false?' on':'');if(yes)yes.className='leak-btn lk-yes'+(val===true?' on':'');}
+function svIV(id){var p=P.find(function(x){return x.id===id;});if(!p)return;var d=getDay(p,curDate);var sitesArr=[0,1,2,3].map(function(i){var el=document.getElementById('ivs'+i);return el?el.value:'';});
+  d.iv2.sites=sitesArr;
+  d.iv2.site=sitesArr.filter(function(s){return s;}).join(', ');d.iv2.insertDate=document.getElementById('ivdt').value;d.iv2.days=document.getElementById('ivdy').value;d.iv2.changeDate=document.getElementById('ivcd').value;if(curPh!==null)d.iv2.ph=curPh;if(curLeak!==null)d.iv2.leak=curLeak;curPh=null;curLeak=null;d.ivOk=true;saveData();closeModal();render();}
+
+// FOLEY
+// FOLEY - new structure
+var curFo={};
+function foleyChangeDateInfo(cd){if(!cd)return'';var diff=daysDiff(curDate,cd);if(diff<0)return'<div class="change-info ci-over">&#128308; เลยกำหนดเปลี่ยน '+Math.abs(diff)+' วันแล้ว (ครบเมื่อ '+thaiDate(cd)+')</div>';if(diff===0)return'<div class="change-info ci-today">&#128993; ครบกำหนดเปลี่ยนสายวันนี้</div>';if(diff<=1)return'<div class="change-info ci-today">&#128993; ใกล้ครบกำหนด เหลืออีก '+diff+' วัน ('+thaiDate(cd)+')</div>';return'<div class="change-info ci-ok">&#129001; ครบกำหนดเปลี่ยนสาย: '+thaiDate(cd)+' (อีก '+diff+' วัน)</div>';}
+function foCalcDays(){
+  var ins=document.getElementById('fo-ins').value;
+  var chgEl=document.getElementById('fo-chg');
+  if(ins){var daysUsed=Math.max(0,Math.floor((new Date(curDate+'T00:00:00')-new Date(ins+'T00:00:00'))/86400000))+1;var e=document.getElementById('fo-days');if(e)e.value=daysUsed;if(chgEl&&!chgEl.value){chgEl.value=addDays(ins,13);}}
+  var chg=chgEl?chgEl.value:'';
+  var info=document.getElementById('fo-cd-info');if(info)info.innerHTML=foleyChangeDateInfo(chg);
+  if(ins&&chg){var total=Math.max(0,Math.floor((new Date(chg+'T00:00:00')-new Date(ins+'T00:00:00'))/86400000))+1;var et=document.getElementById('fo-total');if(et)et.value=total+' วัน';}
+}
+function togFo(k,v){
+  curFo[k]=curFo[k]===v?null:v;
+  var y=document.getElementById('fo_'+k+'_y'),n=document.getElementById('fo_'+k+'_n');
+  if(y)y.className='ci-yes'+(curFo[k]===true?' on':'');
+  if(n)n.className='ci-no'+(curFo[k]===false?' on':'');
+}
+function selFoNec(val){
+  curFo.necessity=curFo.necessity===val?null:val;
+  var y=document.getElementById('fo_nec_y'),n=document.getElementById('fo_nec_n');
+  if(y)y.style.cssText=curFo.necessity===true?'background:#3B6D11;color:#fff;border-color:#3B6D11':'background:#EAF3DE;color:#3B6D11;border-color:#C0DD97';
+  if(n)n.style.cssText=curFo.necessity===false?'background:#A32D2D;color:#fff;border-color:#A32D2D':'background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1';
+}
+function openFo(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;var _chkf=getDay(p,curDate);if(!_chkf.foley)return;
+  var d=getDay(p,curDate).fo;
+  curFo={secure:d.secure,floor:d.floor,closed:d.closed,necessity:d.necessity};
+  var cd=d.changeDate||(d.insertDate?addDays(d.insertDate,13):'');
+  var totalDays=d.insertDate&&cd?Math.max(0,Math.floor((new Date(cd+'T00:00:00')-new Date(d.insertDate+'T00:00:00'))/86400000)+1)+' วัน':'';
+  showModal('<h3>ตรวจ Foley Catheter</h3><div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div>'
+    +'<div class="mf"><label>เหตุผลที่ใส่สายสวนปัสสาวะ</label><input type="text" id="fo-reason" value="'+(d.reason||'')+'" placeholder="เช่น กักเก็บปัสสาวะ, ติดตาม UO"></div>'
+    +'<div class="mf r2"><div><label>วันที่ใส่สาย</label><input type="date" id="fo-ins" value="'+(d.insertDate||'')+'" onchange="foCalcDays()"></div>'
+    +'<div><label>จำนวนวันที่ใส่</label><input type="number" id="fo-days" value="'+(d.days||'')+'" readonly style="background:#f5f6f8"></div></div>'
+    +'<div class="mf r2"><div><label>วันครบเปลี่ยนสาย</label><input type="date" id="fo-chg" value="'+cd+'" onchange="foCalcDays()"></div>'
+    +'<div><label>จำนวนวันรวม</label><input type="text" id="fo-total" value="'+totalDays+'" readonly style="background:#f5f6f8" placeholder="—"></div></div>'
+    +'<div id="fo-cd-info">'+foleyChangeDateInfo(cd)+'</div>'
+    +'<div class="mf" style="margin-top:12px"><label>ความจำเป็นที่ใส่สาย</label>'
+    +'<div class="wb-toggle" style="gap:8px">'
+    +'<div class="wb-btn" style="'+(curFo.necessity===true?'background:#3B6D11;color:#fff;border-color:#3B6D11':'background:#EAF3DE;color:#3B6D11;border-color:#C0DD97')+'" id="fo_nec_y" onclick="selFoNec(true)">ยังมีความจำเป็น</div>'
+    +'<div class="wb-btn" style="'+(curFo.necessity===false?'background:#A32D2D;color:#fff;border-color:#A32D2D':'background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1')+'" id="fo_nec_n" onclick="selFoNec(false)">หมดความจำเป็น</div>'
+    +'</div></div>'
+    +'<div class="section-lbl" style="margin-top:14px">การดูแล Foley Catheter</div>'
+    +'<div class="check-item"><span class="ci-lbl">1. ยึดตรึงสายสวนให้อยู่กับที่</span><div class="ci-btns"><div class="ci-yes'+(d.secure===true?' on':'')+'" id="fo_secure_y" onclick="togFo(\'secure\',true)">ปฏิบัติ</div><div class="ci-no'+(d.secure===false?' on':'')+'" id="fo_secure_n" onclick="togFo(\'secure\',false)">ไม่ปฏิบัติ</div></div></div>'
+    +'<div class="check-item"><span class="ci-lbl">2. ถุงปัสสาวะไม่สัมผัสพื้น</span><div class="ci-btns"><div class="ci-yes'+(d.floor===true?' on':'')+'" id="fo_floor_y" onclick="togFo(\'floor\',true)">ปฏิบัติ</div><div class="ci-no'+(d.floor===false?' on':'')+'" id="fo_floor_n" onclick="togFo(\'floor\',false)">ไม่ปฏิบัติ</div></div></div>'
+    +'<div class="check-item"><span class="ci-lbl">3. สายสวนปัสสาวะเป็นระบบปิด</span><div class="ci-btns"><div class="ci-yes'+(d.closed===true?' on':'')+'" id="fo_closed_y" onclick="togFo(\'closed\',true)">ปฏิบัติ</div><div class="ci-no'+(d.closed===false?' on':'')+'" id="fo_closed_n" onclick="togFo(\'closed\',false)">ไม่ปฏิบัติ</div></div></div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn btn-blue" onclick="svFo('+id+')">บันทึก</button></div>');
+}
+function svFo(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var ins=document.getElementById('fo-ins').value;
+  var chg=document.getElementById('fo-chg').value;
+  var days=document.getElementById('fo-days').value;
+  var total=ins&&chg?String(Math.max(0,Math.floor((new Date(chg+'T00:00:00')-new Date(ins+'T00:00:00'))/86400000))+1):'';
+  d.fo.reason=document.getElementById('fo-reason').value;
+  d.fo.insertDate=ins;d.fo.days=days;d.fo.changeDate=chg;d.fo.totalDays=total;
+  d.fo.necessity=curFo.necessity!==undefined?curFo.necessity:null;
+  d.fo.secure=curFo.secure!==undefined?curFo.secure:null;
+  d.fo.floor=curFo.floor!==undefined?curFo.floor:null;
+  d.fo.closed=curFo.closed!==undefined?curFo.closed:null;
+  curFo={};d.foOk=true;saveData();closeModal();render();showFoleyBeds();
+}
+
+// FOLEY BEDS SUMMARY
+function showFoleyBeds(){
+  var rows=P.filter(function(p){var d=getDay(p,curDate);return d.foley;}).map(function(p){
+    var d=getDay(p,curDate).fo;
+    var hasData=d.insertDate||d.foOk;
+    var nec=d.necessity;
+    var necTxt=nec===true?'<span style="color:#3B6D11;font-weight:500">ยังมีความจำเป็น</span>':nec===false?'<span style="color:#A32D2D;font-weight:500">หมดความจำเป็น</span>':'<span style="color:#8a92a0">ยังไม่ระบุ</span>';
+    var daysTxt=d.days?'วันที่ '+d.days:'—';
+    var changeTxt=d.changeDate?thaiDate(d.changeDate):'—';
+    var cd=d.changeDate;
+    var cdColor='';
+    if(cd){var diff=daysDiff(curDate,cd);if(diff<0)cdColor='color:#A32D2D';else if(diff<=1)cdColor='color:#854F0B';}
+    return '<tr style="border-bottom:0.5px solid #eceef2">'
+      +'<td style="padding:5px 8px;text-align:center"><span style="background:#E6F1FB;color:#0C447C;font-size:12px;padding:2px 8px;border-radius:5px;font-weight:500">'+p.bed+'</span></td>'
+      +'<td style="padding:5px 8px;font-size:12px">'+daysTxt+'</td>'
+      +'<td style="padding:5px 8px;font-size:12px;'+cdColor+'">'+changeTxt+'</td>'
+      +'<td style="padding:5px 8px;font-size:12px">'+necTxt+'</td>'
+      +'</tr>';
+  }).join('');
+  showModal('<h3>สรุปเตียงที่ใส่ Foley Catheter</h3>'
+    +'<div class="msub">'+thaiDate(curDate)+'</div>'
+    +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+    +'<thead><tr style="background:#f5f6f8;border-bottom:0.5px solid #e2e4e9">'
+    +'<th style="padding:6px 8px;text-align:center">เตียง</th>'
+    +'<th style="padding:6px 8px;text-align:left">วันที่ใส่</th>'
+    +'<th style="padding:6px 8px;text-align:left">ครบเปลี่ยน</th>'
+    +'<th style="padding:6px 8px;text-align:left">ความจำเป็น</th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>'
+    +'<div class="mft"><button class="btn btn-blue" onclick="closeModal()">ปิด</button></div>');
+}
+
+// REPORT
+function doReport(){
+  var pend=P.filter(function(p){return!isDone(p,curDate);});
+  var hi=P.filter(function(p){var d=getDay(p,curDate);return d.fOk&&fR(fSc(d.f))==='high';});
+  var md=P.filter(function(p){var d=getDay(p,curDate);return d.fOk&&fR(fSc(d.f))==='med';});
+  var wbng=P.filter(function(p){var d=getDay(p,curDate);return d.wristbandOk&&d.wristband===false;});
+  var lk=P.filter(function(p){var d=getDay(p,curDate);return d.iv&&d.ivOk&&d.iv2.leak===true;});
+  var ov=P.filter(function(p){var d=getDay(p,curDate);return d.iv&&d.ivOk&&d.iv2.changeDate&&daysDiff(curDate,d.iv2.changeDate)<0;});
+  var ph=P.filter(function(p){var d=getDay(p,curDate);return d.iv&&d.ivOk&&parseInt(d.iv2.ph||0)>=2;});
+  var ub=P.filter(function(p){var d=getDay(p,curDate);return d.foley&&d.foOk&&(d.fo.secure===false||d.fo.floor===false||d.fo.closed===false);});
+  var txt='สรุปการตรวจเยี่ยมตอนเช้า\nวันที่: '+thaiDate(curDate)+'\nตรวจแล้ว '+P.filter(function(p){return isDone(p,curDate);}).length+'/'+P.length+' เตียง\n';
+  if(hi.length)txt+='\n🔴 เสี่ยงสูง: '+hi.map(function(p){return'เตียง '+p.bed;}).join(', ')+'\n';
+  if(md.length)txt+='\n🟡 เสี่ยงปานกลาง: '+md.map(function(p){return'เตียง '+p.bed;}).join(', ')+'\n';
+  if(wbng.length)txt+='\n⚠ ป้ายข้อมือผิด/หาย: '+wbng.map(function(p){return'เตียง '+p.bed;}).join(', ')+'\n';
+  if(lk.length)txt+='\n⚠ IV ติด: '+lk.map(function(p){return'เตียง '+p.bed;}).join(', ')+'\n';
+  if(ov.length)txt+='\n🔴 IV เลยกำหนดเปลี่ยน: '+ov.map(function(p){var d=getDay(p,curDate);return'เตียง '+p.bed+' (ครบ '+thaiDate(d.iv2.changeDate)+')';}).join(', ')+'\n';
+  if(ph.length)txt+='\n⚠ Phlebitis Grade >=2: '+ph.map(function(p){var d=getDay(p,curDate);return'เตียง '+p.bed+' (Gr.'+d.iv2.ph+')';}).join(', ')+'\n';
+  var foNec=P.filter(function(p){var d=getDay(p,curDate);return p.foley&&d.foOk&&d.fo.necessity===false;});
+  if(foNec.length)txt+='\n⚠ Foley หมดความจำเป็น: '+foNec.map(function(p){return'เตียง '+p.bed;}).join(', ')+'\n';
+  if(ub.length)txt+='\n⚠ Foley ไม่ปฏิบัติ: '+ub.map(function(p){var d=getDay(p,curDate).fo;var ng=[];if(d.secure===false)ng.push('ยึดสาย');if(d.floor===false)ng.push('ถุงสัมผัสพื้น');if(d.closed===false)ng.push('ไม่ปิดระบบ');return'เตียง '+p.bed+' ('+ng.join(', ')+')';}).join(', ')+'\n';
+  if(pend.length){txt+='\nยังไม่ตรวจครบ:\n';pend.forEach(function(p){var d=getDay(p,curDate);txt+='  เตียง '+p.bed;if(!d.wristbandOk)txt+=' [ป้าย]';if(!d.fOk)txt+=' [Falling]';if(d.iv&&!d.ivOk)txt+=' [IV]';if(d.foley&&!d.foOk)txt+=' [Foley]';txt+='\\n';});}
+  showModal('<h3>สรุปรายงาน — '+thaiDate(curDate)+'</h3><pre style="font-size:11px;background:#f5f6f8;padding:10px;border-radius:6px;white-space:pre-wrap;max-height:300px;overflow-y:auto;line-height:1.7">'+txt+'</pre><div class="mft"><button class="btn" onclick="closeModal()">ปิด</button><button class="btn btn-blue" onclick="navigator.clipboard.writeText('+JSON.stringify(txt)+').then(function(){alert(\'คัดลอกแล้ว\');})">คัดลอก</button></div>');
+}
+
+// ---- EXPORT ----
+function openExport(){
+  // collect dates that have any data
+  var allDates={};
+  P.forEach(function(p){Object.keys(p.days).forEach(function(d){allDates[d]=1;});});
+  var dates=Object.keys(allDates).sort();
+  var dateOpts=dates.length?dates.map(function(d){return'<option value="'+d+'">'+thaiDate(d)+'</option>';}).join(''):'<option value="">ไม่มีข้อมูล</option>';
+  showModal(
+    '<h3>&#11015; Export ข้อมูล</h3>'
+    +'<div class="msub">เลือกรูปแบบและช่วงวันที่</div>'
+    +'<div class="exp-section"><h4>เลือกวันที่</h4>'
+    +'<div class="mf r2">'
+    +'<div><label>จากวันที่</label><select id="exp-from" style="width:100%;font-size:12px;padding:5px 7px;border:0.5px solid #e2e4e9;border-radius:6px;background:#fff">'+dateOpts+'</select></div>'
+    +'<div><label>ถึงวันที่</label><select id="exp-to" style="width:100%;font-size:12px;padding:5px 7px;border:0.5px solid #e2e4e9;border-radius:6px;background:#fff">'+dateOpts+'</select></div>'
+    +'</div></div>'
+    +'<div class="exp-section"><h4>รูปแบบ Export</h4>'
+    +'<div class="exp-row" style="cursor:pointer" onclick="doExportCSV()">'
+    +'<div><div class="er-lbl">&#128196; CSV (เปิดใน Excel)</div><div class="er-sub">ข้อมูลรายเตียงรายวัน แต่ละแถว = 1 เตียง 1 วัน</div></div>'
+    +'<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doExportCSV()">ดาวน์โหลด</button>'
+    +'</div>'
+    +'<div class="exp-row" style="cursor:pointer" onclick="doExportText()">'
+    +'<div><div class="er-lbl">&#128203; สรุปรายงาน (Text)</div><div class="er-sub">สรุปปัญหาแต่ละวัน คัดลอกได้</div></div>'
+    +'<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doExportText()">คัดลอก</button>'
+    +'</div>'
+    +'<div class="exp-row" style="cursor:pointer" onclick="doExportPDF()">'
+    +'<div><div class="er-lbl">&#128196; PDF (พิมพ์/บันทึก)</div><div class="er-sub">ตารางสรุปรายวัน พิมพ์หรือบันทึกเป็น PDF ผ่าน browser</div></div>'
+    +'<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doExportPDF()">สร้าง PDF</button>'
+    +'</div>'
+    +'</div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ปิด</button></div>'
+  );
+  // set exp-to to last date by default
+  if(dates.length>1){var sel=document.getElementById('exp-to');if(sel)sel.selectedIndex=dates.length-1;}
+}
+
+function getExportDates(){
+  var fromEl=document.getElementById('exp-from'),toEl=document.getElementById('exp-to');
+  if(!fromEl||!toEl)return[];
+  var from=fromEl.value,to=toEl.value;
+  var allDates={};P.forEach(function(p){Object.keys(p.days).forEach(function(d){allDates[d]=1;});});
+  return Object.keys(allDates).sort().filter(function(d){return d>=from&&d<=to;});
+}
+
+function doExportCSV(){
+  var dates=getExportDates();
+  if(!dates.length){alert('ไม่มีข้อมูลในช่วงวันที่เลือก');return;}
+  var RS_MAP={high:'สูง >=6',med:'ปานกลาง 3-5',low:'ต่ำ 0-2'};
+  var headers=['วันที่','เตียง','ชื่อ','IV','Foley','CRE','ป้ายข้อมือ','Falling Score','ระดับความเสี่ยง','Phlebitis Grade','IV ติด','IV Site','วันแทง IV','วันครบเปลี่ยน IV','วันใส่ Foley','วันครบเปลี่ยน Foley','ความจำเป็น Foley','ยึดตรึงสาย','ถุงไม่สัมผัสพื้น','ระบบปิด','หมายเหตุ'];
+  var rows=[headers.join(',')];
+  dates.forEach(function(dt){
+    P.forEach(function(p){
+      var d=p.days[dt];
+      if(!d)return;
+      var falling=d.fOk?fSc(d.f):'';
+      var risk=d.fOk?RS_MAP[fR(fSc(d.f))]:'';
+      var wb=d.wristbandOk?(d.wristband===true?'ถูกต้อง':'ผิด/หาย'):'';
+      var ph=d.ivOk&&d.iv2.ph!=='-1'?d.iv2.ph:'';
+      var leak=d.ivOk?(d.iv2.leak===true?'ติด':d.iv2.leak===false?'ไม่ติด':''):'';
+      var nec=d.foOk?(d.fo.necessity===true?'ยังมีความจำเป็น':d.fo.necessity===false?'หมดความจำเป็น':''):'';
+      var secure=d.foOk?(d.fo.secure===true?'ปฏิบัติ':d.fo.secure===false?'ไม่ปฏิบัติ':''):'';
+      var floor=d.foOk?(d.fo.floor===true?'ปฏิบัติ':d.fo.floor===false?'ไม่ปฏิบัติ':''):'';
+      var closed=d.foOk?(d.fo.closed===true?'ปฏิบัติ':d.fo.closed===false?'ไม่ปฏิบัติ':''):'';
+      var row=[
+        thaiDate(dt), p.bed, '"'+(p.name||'')+'"',
+        d.iv?'มี':'ไม่มี', d.foley?'มี':'ไม่มี', d.cre?'ใช่':'ไม่ใช่',
+        wb, falling, risk, ph, leak,
+        '"'+(d.iv2.site||'')+'"', d.iv2.insertDate||'', d.iv2.changeDate||'',
+        d.fo.insertDate||'', d.fo.changeDate||'', nec,
+        secure, floor, closed,
+        '"'+(d.note||'')+'"'
+      ];
+      rows.push(row.join(','));
+    });
+  });
+  var bomChar=String.fromCharCode(65279);var csv=bomChar+rows.join('\n')
+
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  var from=document.getElementById('exp-from').value;
+  var to=document.getElementById('exp-to').value;
+  a.download='morning_round_'+from+(from!==to?'_to_'+to:'')+'.csv';
+  var b2=document.body||document.documentElement;b2.appendChild(a);a.click();setTimeout(function(){b2.removeChild(a);},100);
+  URL.revokeObjectURL(url);
+}
+
+function doExportText(){
+  var dates=getExportDates();
+  if(!dates.length){alert('ไม่มีข้อมูลในช่วงวันที่เลือก');return;}
+  var lines=[];
+  dates.forEach(function(dt){
+    lines.push('=== '+thaiDate(dt)+' ===');
+    var done=P.filter(function(p){var d=p.days[dt];return d&&d.wristbandOk&&d.fOk&&(!d.iv||d.ivOk)&&(!d.foley||d.foOk);}).length;
+    lines.push('ตรวจแล้ว '+done+'/'+P.length+' เตียง');
+    var hi=P.filter(function(p){var d=p.days[dt];return d&&d.fOk&&fR(fSc(d.f))==='high';});
+    if(hi.length)lines.push('[สูง] '+hi.map(function(p){return'เตียง '+p.bed;}).join(', '));
+    var wbng=P.filter(function(p){var d=p.days[dt];return d&&d.wristbandOk&&d.wristband===false;});
+    if(wbng.length)lines.push('[ป้ายผิด/หาย] '+wbng.map(function(p){return'เตียง '+p.bed;}).join(', '));
+    var ph2=P.filter(function(p){var d=p.days[dt];return d&&d.iv&&d.ivOk&&parseInt(d.iv2.ph||0)>=2;});
+    if(ph2.length)lines.push('[Phlebitis>=2] '+ph2.map(function(p){var d=p.days[dt];return'เตียง '+p.bed+'(Gr.'+d.iv2.ph+')';}).join(', '));
+    var nec=P.filter(function(p){var d=p.days[dt];return d&&d.foley&&d.foOk&&d.fo.necessity===false;});
+    if(nec.length)lines.push('[Foley หมดความจำเป็น] '+nec.map(function(p){return'เตียง '+p.bed;}).join(', '));
+    var hadE=P.filter(function(p){var d=p.days[dt];return d&&d.had&&d.had.flag;});
+    if(hadE.length)lines.push('[HAD] '+hadE.map(function(p){var h=p.days[dt].had;return'เตียง '+p.bed+(h.drugs&&h.drugs.length?' ('+h.drugs.join('/')+')'  :'');}).join(', '));
+    var lsE=P.filter(function(p){var d=p.days[dt];return d&&d.lawsuit&&d.lawsuit.flag;});
+    if(lsE.length)lines.push('[เสี่ยงฟ้องร้อง] '+lsE.map(function(p){var ls=p.days[dt].lawsuit;return'เตียง '+p.bed+(ls.reason?' ('+ls.reason+')':'');}).join(', '));
+    var blE=P.filter(function(p){var d=p.days[dt];return d&&d.billing&&d.billing.flag;});
+    if(blE.length)lines.push('[ปัญหาค่ารักษา] '+blE.map(function(p){var bl=p.days[dt].billing;return'เตียง '+p.bed+(bl.type?' ('+bl.type+')':'');}).join(', '));
+    lines.push('');
+  });
+  var txt=lines.join('\n');
+  navigator.clipboard.writeText(txt).then(function(){
+    alert('คัดลอกแล้ว! วาง (Ctrl+V) ในโปรแกรมที่ต้องการได้เลย');
+    closeModal();
+  }).catch(function(){
+    showModal('<h3>สรุปข้อมูล Export</h3><pre style="font-size:11px;background:#f5f6f8;padding:10px;border-radius:6px;white-space:pre-wrap;max-height:400px;overflow-y:auto;line-height:1.7">'+txt+'</pre><div class="mft"><button class="btn" onclick="closeModal()">ปิด</button></div>');
+  });
+}
+
+function doExportPDF(){
+  var dates=getExportDates();
+  if(!dates.length){alert('ไม่มีข้อมูลในช่วงวันที่เลือก');return;}
+  var RS_MAP={high:'สูง >=6',med:'ปานกลาง 3-5',low:'ต่ำ 0-2'};
+  var html='<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">'
+    +'<title>Morning Round — ชีวรักษ์</title>'
+    +'<style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +'body{font-family:Sarabun,system-ui,sans-serif;font-size:11px;color:#111;background:#fff;padding:12px}'
+    +'h1{font-size:15px;font-weight:500;margin-bottom:2px}'
+    +'.sub{font-size:11px;color:#6b7480;margin-bottom:14px}'
+    +'.day-block{margin-bottom:18px;page-break-inside:avoid}'
+    +'.day-title{font-size:13px;font-weight:500;background:#f5f6f8;padding:6px 10px;border-radius:6px 6px 0 0;border-bottom:1px solid #ddd}'
+    +'table{width:100%;border-collapse:collapse;font-size:10.5px}'
+    +'thead th{background:#e8e6df;padding:5px 6px;text-align:center;border:0.5px solid #e2e4e9;font-weight:500;white-space:nowrap}'
+    +'thead th:first-child{text-align:left}'
+    +'tbody td{padding:4px 6px;border:0.5px solid #e2e4e9;vertical-align:middle;text-align:center}'
+    +'tbody td:first-child{text-align:left}'
+    +'tbody tr:nth-child(even){background:#f9f9fb}'
+    +'.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:500}'
+    +'.t-hi{background:#FCEBEB;color:#A32D2D}'
+    +'.t-med{background:#FAEEDA;color:#854F0B}'
+    +'.t-lo{background:#EAF3DE;color:#3B6D11}'
+    +'.t-ok{background:#EAF3DE;color:#3B6D11}'
+    +'.t-ng{background:#FCEBEB;color:#A32D2D}'
+    +'.t-gray{background:#f5f6f8;color:#555}'
+    +'.summary{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px}'
+    +'.sum-item{background:#f5f6f8;border-radius:5px;padding:3px 8px;font-size:10px}'
+    +'.sum-item span{font-weight:500}'
+    +'@media print{.day-block{page-break-inside:avoid}body{padding:4px}}'
+    +'</style></head><body>'
+    +'<h1>Morning Round — ตรวจเยี่ยมผู้ป่วย</h1>'
+    +'<div class="sub">Export: '+thaiDate(dates[0])+(dates.length>1?' — '+thaiDate(dates[dates.length-1]):'')+'</div>';
+
+  dates.forEach(function(dt){
+    var dayPats=P.filter(function(p){return p.days[dt];});
+    var done=dayPats.filter(function(p){var d=p.days[dt];return d.wristbandOk&&d.fOk&&(!d.iv||d.ivOk)&&(!d.foley||d.foOk);}).length;
+    var hi=dayPats.filter(function(p){var d=p.days[dt];return d.fOk&&fR(fSc(d.f))==='high';});
+    var wbng=dayPats.filter(function(p){var d=p.days[dt];return d.wristbandOk&&d.wristband===false;});
+    var ivph=dayPats.filter(function(p){var d=p.days[dt];return d.iv&&d.ivOk&&parseInt(d.iv2.ph||0)>=2;});
+    var fonec=dayPats.filter(function(p){var d=p.days[dt];return d.foley&&d.foOk&&d.fo.necessity===false;});
+
+    html+='<div class="day-block">'
+      +'<div class="day-title">'+thaiDate(dt)+'</div>'
+      +'<div class="summary">'
+      +'<div class="sum-item">ทั้งหมด <span>'+P.length+'</span></div>'
+      +'<div class="sum-item">ตรวจแล้ว <span>'+done+'</span></div>'
+      +(hi.length?'<div class="sum-item" style="background:#FCEBEB">🔴 เสี่ยงสูง <span>'+hi.map(function(p){return p.bed;}).join(',')+'</span></div>':'')
+      +(wbng.length?'<div class="sum-item" style="background:#FCEBEB">🏷 ป้ายผิด <span>'+wbng.map(function(p){return p.bed;}).join(',')+'</span></div>':'')
+      +(ivph.length?'<div class="sum-item" style="background:#FAEEDA">💉 Phlebitis>=2 <span>'+ivph.map(function(p){return p.bed;}).join(',')+'</span></div>':'')
+      +(fonec.length?'<div class="sum-item" style="background:#FCEBEB">🚨 Foley หมดความจำเป็น <span>'+fonec.map(function(p){return p.bed;}).join(',')+'</span></div>':'')
+      +'</div>'
+      +'<table><thead><tr>'
+      +'<th>เตียง</th><th>ชื่อ</th><th>IV</th><th>Foley</th><th>CRE</th>'
+      +'<th>ป้ายข้อมือ</th><th>Falling</th><th>ความเสี่ยง</th>'
+      +'<th>Phlebitis</th><th>IV ติด</th><th>ครบ IV</th>'
+      +'<th>ครบ Foley</th><th>ความจำเป็น</th><th>ดูแล Foley</th>'
+      +'<th>หมายเหตุ</th>'
+      +'</tr></thead><tbody>';
+
+    P.forEach(function(p){
+      var d=p.days[dt];
+      if(!d)return;
+      var falling=d.fOk?String(fSc(d.f)):'-';
+      var risk=d.fOk?fR(fSc(d.f)):null;
+      var riskTag=risk?'<span class="tag t-'+(risk==='high'?'hi':risk==='med'?'med':'lo')+'">'+RS_MAP[risk]+'</span>':'-';
+      var wb=d.wristbandOk?(d.wristband===true?'<span class="tag t-ok">ถูก</span>':'<span class="tag t-ng">ผิด/หาย</span>'):'-';
+      var ph=d.ivOk&&d.iv2.ph!=='-1'?d.iv2.ph:'-';
+      var leak=d.ivOk?(d.iv2.leak===true?'<span class="tag t-ng">ติด</span>':d.iv2.leak===false?'<span class="tag t-ok">ไม่ติด</span>':'-'):'-';
+      var ivChg=d.iv2.changeDate?thaiDate(d.iv2.changeDate):'-';
+      var foChg=d.fo.changeDate?thaiDate(d.fo.changeDate):'-';
+      var nec=d.foOk?(d.fo.necessity===true?'<span class="tag t-ok">ยังมี</span>':d.fo.necessity===false?'<span class="tag t-ng">หมด</span>':'-'):'-';
+      var care=d.foOk?['ยึด','ถุง','ปิด'].map(function(lbl,i){var v=[d.fo.secure,d.fo.floor,d.fo.closed][i];return lbl+':'+(v===true?'&#10003;':v===false?'<span style="color:#A32D2D">&#10005;</span>':'-');}).join(' '):'-';
+      html+='<tr>'
+        +'<td><strong>'+p.bed+'</strong></td>'
+        +'<td>'+(p.name||'-')+'</td>'
+        +'<td>'+(d.iv?'<span class="tag t-gray">มี</span>':'-')+'</td>'
+        +'<td>'+(d.foley?'<span class="tag t-gray">มี</span>':'-')+'</td>'
+        +'<td>'+(d.cre?'<span class="tag t-ng">CRE</span>':'-')+'</td>'
+        +'<td>'+wb+'</td>'
+        +'<td>'+falling+'</td>'
+        +'<td>'+riskTag+'</td>'
+        +'<td>'+ph+'</td>'
+        +'<td>'+leak+'</td>'
+        +'<td style="font-size:9.5px">'+ivChg+'</td>'
+        +'<td style="font-size:9.5px">'+foChg+'</td>'
+        +'<td>'+nec+'</td>'
+        +'<td style="font-size:9.5px">'+care+'</td>'
+        +'<td style="font-size:9.5px">'+(d.note||'-')+'</td>'
+        +'</tr>';
+    });
+    html+='</tbody></table></div>';
+  });
+  html+='</body></html>';
+
+  var win=window.open('','_blank');
+  if(!win){alert('กรุณาอนุญาต popup แล้วลองใหม่');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(function(){win.print();},600);
+}
+
+function switchPage(page){
+  document.querySelectorAll('.page-tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.page-section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('page-'+page).classList.add('active');
+  var tabs=document.querySelectorAll('.page-tab');
+  if(page==='dash'){tabs[0].classList.add('active');renderDash();}
+  else if(page==='main'){tabs[1].classList.add('active');render();}
+}
+
+// ---- DASHBOARD ----
+function renderDash(){
+  var el=document.getElementById('dash-content');
+  if(!el)return;
+  var date=curDate;
+
+  // ---- Morning Round data ----
+  var total=P.length;
+  var done=P.filter(function(p){return isDone(p,date);}).length;
+  var pct=total?Math.round(done/total*100):0;
+  var hi=P.filter(function(p){var d=getDay(p,date);return d.fOk&&fR(fSc(d.f))==='high';});
+  var med=P.filter(function(p){var d=getDay(p,date);return d.fOk&&fR(fSc(d.f))==='med';});
+  var lo=P.filter(function(p){var d=getDay(p,date);return d.fOk&&fR(fSc(d.f))==='low';});
+  var wbng=P.filter(function(p){var d=getDay(p,date);return d.wristbandOk&&d.wristband===false;});
+  var ivPats=P.filter(function(p){return getDay(p,date).iv;});
+  var phPats=P.filter(function(p){var d=getDay(p,date);return d.iv&&d.ivOk&&parseInt(d.iv2.ph||0)>=2;});
+  var foleyPats=P.filter(function(p){return getDay(p,date).foley;});
+  var foNec=P.filter(function(p){var d=getDay(p,date);return d.foley&&d.foOk&&d.fo.necessity===false;});
+  var crePats=P.filter(function(p){return getDay(p,date).cre;});
+  var crabPatsDash=P.filter(function(p){return getDay(p,date).crab;});
+
+  // Falling distribution bar
+  var fallTotal=hi.length+med.length+lo.length;
+  function pctBar(n,tot,col){if(!tot)return'';var w=Math.round(n/tot*100);return'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="width:80px;font-size:12px;color:#475569">'+n+' ราย</div><div style="flex:1;height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden"><div style="height:100%;width:'+w+'%;background:'+col+';border-radius:5px"></div></div><div style="width:36px;font-size:11px;color:#94a3b8;text-align:right">'+w+'%</div></div>';}
+
+  function card(icon,title,val,sub,borderCol){
+    return'<div style="background:#fff;border-radius:14px;padding:16px 18px;border:none;box-shadow:0 2px 12px rgba(0,0,0,.07);border-top:4px solid '+borderCol+'">'
+      +'<div style="font-size:22px;margin-bottom:4px">'+icon+'</div>'
+      +'<div style="font-size:32px;font-weight:800;color:#1e293b;line-height:1">'+val+'</div>'
+      +'<div style="font-size:13px;font-weight:600;color:#374151;margin-top:6px">'+title+'</div>'
+      +(sub?'<div style="font-size:11px;color:#94a3b8;margin-top:2px">'+sub+'</div>':'')
+      +'</div>';
+  }
+
+  el.innerHTML=
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px">'
+    +'<div><h2 style="font-size:18px;font-weight:800;color:#1e293b;margin:0">&#128202; Dashboard</h2>'
+    +'<div style="font-size:12px;color:#64748b;margin-top:3px">'+WARD.name+' &nbsp;|&nbsp; '+thaiDate(date)+'</div></div>'
+    +'<button class="btn btn-blue" onclick="switchPage(\'main\')" style="font-size:12px">Morning Round &#8594;</button>'
+    +'</div>'
+
+    // --- Section 1: Morning Round stats (compact) ---
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px">'
+    +card('&#128203;','ผู้ป่วยทั้งหมด',total,'25 เตียง','#3b82f6')
+    +card('&#128167;','เตียงที่ใส่ Foley',foleyPats.length,'สายสวนปัสสาวะ','#06b6d4')
+    +card('&#128137;','Phlebitis >=2',phPats.length,'ต้องติดตาม','#f59e0b')
+    +card('&#9888;','CRE',crePats.length,crePats.length?crePats.map(function(p){return p.bed;}).join(', '):'ไม่มี','#ec4899')
+    +card('&#9888;','CRAB',crabPatsDash.length,crabPatsDash.length?crabPatsDash.map(function(p){return p.bed;}).join(', '):'ไม่มี','#7c3aed')
+    +(function(){var hd=P.filter(function(p){var d=getDay(p,date);return d.had&&d.had.flag;});return card('💊','ยา HAD',hd.length,hd.length?hd.map(function(p){return p.bed;}).join(', '):'ไม่มี','#d97706');})()
+    +(function(){var lsp=P.filter(function(p){var d=getDay(p,date);return d.lawsuit&&d.lawsuit.flag;});return card('⚖','เสี่ยงฟ้องร้อง',lsp.length,lsp.length?lsp.map(function(p){return p.bed;}).join(', '):'ไม่มี','#dc2626');})()
+    +(function(){var blp=P.filter(function(p){var d=getDay(p,date);return d.billing&&d.billing.flag;});return card('💳','ปัญหาค่ารักษา',blp.length,blp.length?blp.map(function(p){return p.bed;}).join(', '):'ไม่มี','#7c3aed');})()
+    +'</div>'
+
+    // --- Section 2: Falling risk + watch list ---
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">'
+    +'<div style="background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">'
+    +'<div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:12px">&#128202; ระดับความเสี่ยง Falling</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:16px">'
+    +'<div style="flex:1;text-align:center;padding:12px 6px;background:#fee2e2;border-radius:12px;border:2px solid #fca5a5"><div style="font-size:32px;font-weight:900;color:#dc2626;line-height:1">'+hi.length+'</div><div style="font-size:11px;color:#ef4444;font-weight:700;margin-top:4px">เสี่ยงสูง</div></div>'
+    +'<div style="flex:1;text-align:center;padding:12px 6px;background:#fef3c7;border-radius:12px;border:2px solid #fde68a"><div style="font-size:32px;font-weight:900;color:#d97706;line-height:1">'+med.length+'</div><div style="font-size:11px;color:#f59e0b;font-weight:700;margin-top:4px">ปานกลาง</div></div>'
+    +'<div style="flex:1;text-align:center;padding:12px 6px;background:#dcfce7;border-radius:12px;border:2px solid #86efac"><div style="font-size:32px;font-weight:900;color:#16a34a;line-height:1">'+lo.length+'</div><div style="font-size:11px;color:#22c55e;font-weight:700;margin-top:4px">ต่ำ</div></div>'
+    +'</div>'
+    +'<div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">&#128308; เตียงเสี่ยงสูง</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px">'
+    +(hi.length?hi.map(function(p){return'<span style="display:inline-flex;align-items:baseline;gap:1px;background:#dc2626;color:#fff;border-radius:10px;padding:8px 14px;min-width:46px;justify-content:center;box-shadow:0 2px 8px rgba(220,38,38,.35)"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>';}).join(''):'<span style="font-size:12px;color:#94a3b8">ไม่มี</span>')
+    +'</div>'
+    +'<div style="margin-top:14px;padding:10px 14px;background:#fff7ed;border-radius:10px;border-left:4px solid #f97316">'
+    +'<div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:6px">&#128680; Foley หมดความจำเป็น ('+foNec.length+')</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+(foNec.length?foNec.map(function(p){return'<span style="display:inline-flex;align-items:baseline;gap:1px;background:#f97316;color:#fff;border-radius:10px;padding:7px 13px;min-width:46px;justify-content:center;box-shadow:0 2px 8px rgba(249,115,22,.3)"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>';}).join(''):'<span style="font-size:12px;color:#94a3b8">ไม่มี</span>')+'</div>'
+    +'</div>'
+    +'</div>'
+
+    // --- Watch list with bed chips ---
+    +'<div style="background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">'
+    +'<div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:14px">&#9888; รายการที่ต้องติดตาม</div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px">'
+    +'<div style="padding:10px 14px;background:#faf5ff;border-radius:10px;border-left:4px solid #a855f7">'
+    +'<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:6px">&#127991; ป้ายข้อมือผิด/หาย ('+wbng.length+')</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+(wbng.length?wbng.map(function(p){return'<span style="display:inline-flex;align-items:baseline;gap:1px;background:#7c3aed;color:#fff;border-radius:10px;padding:7px 13px;min-width:46px;justify-content:center;box-shadow:0 2px 8px rgba(124,58,237,.3)"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>';}).join(''):'<span style="font-size:12px;color:#94a3b8">ไม่มี</span>')+'</div>'
+    +'</div>'
+    +'<div style="padding:10px 14px;background:#fff7ed;border-radius:10px;border-left:4px solid #f59e0b">'
+    +'<div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:6px">&#128137; Phlebitis Grade >=2 ('+phPats.length+')</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+(phPats.length?phPats.map(function(p){var ph=getDay(p,date).iv2.ph;return'<span style="display:inline-flex;flex-direction:column;align-items:center;background:#d97706;color:#fff;border-radius:10px;padding:7px 10px;min-width:46px;box-shadow:0 2px 8px rgba(217,119,6,.3)"><span style="display:inline-flex;align-items:baseline;gap:1px"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span><span style="font-size:9px;opacity:.85;margin-top:2px">Gr.'+ph+'</span></span>';}).join(''):'<span style="font-size:12px;color:#94a3b8">ไม่มี</span>')+'</div>'
+    +'</div>'
+    +'<div style="padding:10px 14px;background:#ecfeff;border-radius:10px;border-left:4px solid #06b6d4">'
+    +'<div style="font-size:11px;font-weight:700;color:#0891b2;margin-bottom:6px">&#128167; เตียงที่ใส่ Foley ('+foleyPats.length+')</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+(foleyPats.length?foleyPats.map(function(p){var fo=getDay(p,date).fo;var cd=fo.changeDate;var bg='#0891b2';if(cd){var diff=daysDiff(date,cd);if(diff<0)bg='#dc2626';else if(diff<=1)bg='#d97706';}return'<span style="display:inline-flex;flex-direction:column;align-items:center;background:'+bg+';color:#fff;border-radius:10px;padding:7px 10px;min-width:46px;box-shadow:0 2px 8px rgba(8,145,178,.3)"><span style="display:inline-flex;align-items:baseline;gap:1px"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>'+(fo.days?'<span style="font-size:9px;opacity:.85;margin-top:2px">'+fo.days+' วัน</span>':'')+'</span>';}).join(''):'<span style="font-size:12px;color:#94a3b8">ไม่มี</span>')+'</div>'
+    +'</div>'
+    +(crePats.length?'<div style="padding:10px 14px;background:#fdf2f8;border-radius:10px;border-left:4px solid #ec4899"><div style="font-size:11px;font-weight:700;color:#db2777;margin-bottom:6px">&#9888; เตียง CRE ('+crePats.length+')</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+crePats.map(function(p){return'<span style="display:inline-flex;align-items:baseline;gap:1px;background:#db2777;color:#fff;border-radius:10px;padding:7px 13px;min-width:46px;justify-content:center;box-shadow:0 2px 8px rgba(219,39,119,.3)"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>';}).join('')+'</div></div>':'')
+    +(crabPatsDash.length?'<div style="padding:10px 14px;background:#faf5ff;border-radius:10px;border-left:4px solid #7c3aed"><div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:6px">&#9888; เตียง CRAB ('+crabPatsDash.length+')</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+crabPatsDash.map(function(p){return'<span style="display:inline-flex;align-items:baseline;gap:1px;background:#7c3aed;color:#fff;border-radius:10px;padding:7px 13px;min-width:46px;justify-content:center;box-shadow:0 2px 8px rgba(124,58,237,.3)"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>';}).join('')+'</div></div>':'')
+
+    // HAD watchlist
+    +(function(){var hadPatsD=P.filter(function(p){var d=getDay(p,date);return d.had&&d.had.flag;});
+    if(!hadPatsD.length)return'';
+    return'<div style="padding:10px 14px;background:#fffbeb;border-radius:10px;border-left:4px solid #d97706"><div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:6px">💊 เตียงที่มียา HAD ('+hadPatsD.length+')</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+hadPatsD.map(function(p){var had=getDay(p,date).had;return'<span style="display:inline-flex;flex-direction:column;align-items:center;background:#d97706;color:#fff;border-radius:10px;padding:7px 10px;min-width:46px;box-shadow:0 2px 8px rgba(217,119,6,.3)"><span style="display:inline-flex;align-items:baseline;gap:1px"><span style="font-size:11px;font-weight:700;opacity:.85">B</span><span style="font-size:22px;font-weight:900;line-height:1">'+p.bed+'</span></span>'+'</span>';}).join('')+'</div></div>';})()
+
+    // Lawsuit watchlist
+    +(function(){var lsPatsD=P.filter(function(p){var d=getDay(p,date);return d.lawsuit&&d.lawsuit.flag;});
+    if(!lsPatsD.length)return'';
+    return'<div style="padding:10px 14px;background:#fef2f2;border-radius:10px;border-left:4px solid #dc2626"><div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:6px">⚖ เตียงเสี่ยงต่อการฟ้องร้อง ('+lsPatsD.length+')</div><div style="display:flex;flex-direction:column;gap:5px">'+lsPatsD.map(function(p){var ls=getDay(p,date).lawsuit;return'<div style="display:flex;align-items:center;gap:8px;background:#fff0f0;border-radius:8px;padding:7px 10px"><span style="display:inline-flex;align-items:baseline;gap:1px;background:#dc2626;color:#fff;border-radius:8px;padding:5px 10px;min-width:42px;justify-content:center;box-shadow:0 2px 6px rgba(220,38,38,.3)"><span style="font-size:10px;font-weight:700;opacity:.85">B</span><span style="font-size:18px;font-weight:900;line-height:1">'+p.bed+'</span></span><div style="flex:1;font-size:11px"><div style="font-weight:600;color:#991b1b">'+(ls.reason||'ไม่ระบุสาเหตุ')+'</div>'+(ls.detail?'<div style="color:#7f1d1d;opacity:.8;margin-top:2px">'+ls.detail.substring(0,60)+(ls.detail.length>60?'...':'')+'</div>':'')+'</div></div>';}).join('')+'</div></div>';})()
+
+    // Billing watchlist
+    +(function(){var blPatsD=P.filter(function(p){var d=getDay(p,date);return d.billing&&d.billing.flag;});
+    if(!blPatsD.length)return'';
+    return'<div style="padding:10px 14px;background:#f5f3ff;border-radius:10px;border-left:4px solid #7c3aed"><div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:6px">💳 เตียงที่มีปัญหาค่ารักษา ('+blPatsD.length+')</div><div style="display:flex;flex-direction:column;gap:5px">'+blPatsD.map(function(p){var bl=getDay(p,date).billing;return'<div style="display:flex;align-items:center;gap:8px;background:#ede9fe;border-radius:8px;padding:7px 10px"><span style="display:inline-flex;align-items:baseline;gap:1px;background:#7c3aed;color:#fff;border-radius:8px;padding:5px 10px;min-width:42px;justify-content:center;box-shadow:0 2px 6px rgba(124,58,237,.3)"><span style="font-size:10px;font-weight:700;opacity:.85">B</span><span style="font-size:18px;font-weight:900;line-height:1">'+p.bed+'</span></span><div style="flex:1;font-size:11px"><div style="font-weight:600;color:#5b21b6">'+(bl.type||'ไม่ระบุประเภท')+'</div>'+(bl.detail?'<div style="color:#4c1d95;opacity:.8;margin-top:2px">'+bl.detail.substring(0,60)+(bl.detail.length>60?'...':'')+'</div>':'')+'</div></div>';}).join('')+'</div></div>';})()
+
+    +'</div>'
+    +'</div>'
+    +'</div>'
+    +'</div>'
+
+    
+    // --- Section 4: Quick links ---
+    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">'
+    +'<button class="btn" onclick="switchPage(\'main\')" style="padding:14px;border-radius:12px;font-size:13px;font-weight:600;color:#2563eb;border-color:#93c5fd;background:#eff6ff">&#128203; Morning Round</button>'
+    +'<button class="btn" onclick="openExport()" style="padding:14px;border-radius:12px;font-size:13px;font-weight:600;color:#7c3aed;border-color:#c4b5fd;background:#faf5ff">&#11015; Export ข้อมูล</button>'
+    +'</div>';
+}
+
+function showModal(h){
+  // Clear both containers first
+  var mc=document.getElementById('mc');if(mc)mc.innerHTML='';
+  var mc2=document.getElementById('mc-admit');if(mc2)mc2.innerHTML='';
+  var html='<div id="modal-overlay" style="position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;overflow-y:auto" onclick="if(event.target===this)closeModal()"><div style="background:#fff;border-radius:16px;padding:24px 20px;width:92%;max-width:560px;max-height:90vh;overflow-y:auto;margin:auto">'+h+'</div></div>';
+  // Write ONLY to the container inside the currently active page section
+  // to avoid duplicate element IDs which break getElementById lookups
+  var activePage=document.querySelector('.page-section.active');
+  var target=null;
+  if(activePage){
+    target=activePage.querySelector('#mc')||activePage.querySelector('#mc-admit');
+  }
+  // Fallback: whichever container exists
+  if(!target)target=mc||mc2;
+  if(target)target.innerHTML=html;
+}
+function closeModal(){
+  var mc=document.getElementById('mc');if(mc)mc.innerHTML='';
+  curPh=null;curU=null;curLeak=null;curWB=null;
+}
+
+// ===================== HAD =====================
+function openHAD(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var had=d.had||(d.had={flag:false,drugs:[],note:''});
+  showModal(
+    '<h3>💊 ยา High Alert Drug (HAD)</h3>'
+    +'<div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div>'
+    +'<div style="background:#FEF3C7;border-radius:8px;padding:9px 12px;margin-bottom:16px;font-size:11px;color:#92400e;line-height:1.6">⚠ ยากลุ่มเสี่ยงสูงที่ต้องมีการระมัดระวังพิเศษในการใช้ ต้องมี 2 คนตรวจสอบก่อนให้ยา</div>'
+    +'<div class="mf"><label>สถานะยา HAD</label>'
+    +'<div style="display:flex;gap:10px">'
+    +'<div class="wb-btn wb-ok'+(had.flag===false?' on':'')+'" style="flex:1;text-align:center;font-size:15px;padding:16px 8px" id="had_none" onclick="selHAD(false)">✓ ไม่มียา HAD</div>'
+    +'<div class="wb-btn wb-ng'+(had.flag===true?' on':'')+'" style="flex:1;text-align:center;font-size:15px;padding:16px 8px" id="had_yes" onclick="selHAD(true)">⚠ มียา HAD</div>'
+    +'</div></div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn btn-blue" onclick="saveHAD('+id+')">บันทึก</button></div>'
+  );
+}
+var _hadFlag=null;
+function selHAD(val){
+  _hadFlag=val;
+  var ok=document.getElementById('had_none'),ng=document.getElementById('had_yes');
+  if(ok)ok.className='wb-btn wb-ok'+(val===false?' on':'');
+  if(ng)ng.className='wb-btn wb-ng'+(val===true?' on':'');
+}
+function saveHAD(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var flag=_hadFlag!==null?_hadFlag:(d.had?d.had.flag:false);
+  d.had={flag:flag,drugs:[],note:''};
+  _hadFlag=null;saveData();closeModal();render();
+}
+
+// ===================== LAWSUIT =====================
+var LAWSUIT_REASONS=['ภาวะแทรกซ้อนจากการรักษา','ไม่ได้รับการรักษาทันเวลา','ผลการรักษาไม่เป็นตามที่คาดหวัง','พลัดตกหกล้มในโรงพยาบาล','ข้อมูลไม่ครบถ้วน / การสื่อสารผิดพลาด','ปัญหาความไม่พอใจในการบริการ','อื่นๆ'];
+function openLawsuit(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var ls=d.lawsuit||(d.lawsuit={flag:false,reason:'',detail:''});
+  var opts=LAWSUIT_REASONS.map(function(r){return'<option value="'+r+'" '+(ls.reason===r?'selected':'')+'>'+r+'</option>';}).join('');
+  showModal(
+    '<h3>⚖ เตียงเสี่ยงต่อการฟ้องร้อง</h3>'
+    +'<div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div>'
+    +'<div style="background:#FEE2E2;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:11px;color:#991b1b;line-height:1.6">⚠ บันทึกข้อมูลเพื่อประสานทีมที่เกี่ยวข้อง และติดตามอย่างใกล้ชิด</div>'
+    +'<div class="mf"><label>สถานะความเสี่ยงฟ้องร้อง</label>'
+    +'<div style="display:flex;gap:8px">'
+    +'<div class="wb-btn wb-ok'+(ls.flag===false?' on':'')+'" style="flex:1" id="ls_no" onclick="selLS(false)">ไม่มีความเสี่ยง</div>'
+    +'<div class="wb-btn wb-ng'+(ls.flag===true?' on':'')+'" style="flex:1" id="ls_yes" onclick="selLS(true)">⚠ มีความเสี่ยง</div>'
+    +'</div></div>'
+    +'<div class="mf"><label>สาเหตุหลัก</label>'
+    +'<select id="ls_reason" style="width:100%;font-size:12px;padding:5px 8px;border:0.5px solid #e2e4e9;border-radius:6px">'
+    +'<option value="">-- เลือกสาเหตุ --</option>'+opts
+    +'</select></div>'
+    +'<div class="mf"><label>รายละเอียด / แนวทางประสาน</label>'
+    +'<textarea id="ls_detail" rows="3" style="width:100%;font-size:12px;padding:6px 8px;border:0.5px solid #e2e4e9;border-radius:6px;resize:vertical" placeholder="ระบุรายละเอียดเพิ่มเติม...">'+( ls.detail||'')+'</textarea></div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn" onclick="clrLS('+id+')">ล้างค่า</button><button class="btn btn-blue" onclick="saveLS('+id+')">บันทึก</button></div>'
+  );
+}
+var _lsFlag=null;
+function selLS(val){_lsFlag=val;var no=document.getElementById('ls_no'),yes=document.getElementById('ls_yes');if(no)no.className='wb-btn wb-ok'+(val===false?' on':'');if(yes)yes.className='wb-btn wb-ng'+(val===true?' on':'');}
+function saveLS(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var flag=_lsFlag!==null?_lsFlag:false;
+  var reason=document.getElementById('ls_reason').value||'';
+  var detail=document.getElementById('ls_detail').value||'';
+  d.lawsuit={flag:flag,reason:reason,detail:detail};
+  _lsFlag=null;saveData();closeModal();render();
+}
+function clrLS(id){var p=P.find(function(x){return x.id===id;});if(p){getDay(p,curDate).lawsuit={flag:false,reason:'',detail:''};saveData();}closeModal();render();}
+
+// ===================== BILLING =====================
+var BILLING_TYPES=['ไม่มีสิทธิ์การรักษา','สิทธิ์หมดอายุ/ไม่ครอบคลุม','ค้างชำระค่ารักษา','ประกันไม่ครอบคลุมการรักษา','รอพิสูจน์ตัวตน/เอกสารไม่ครบ','ผู้ป่วยต่างชาติ','อื่นๆ'];
+function openBilling(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var bl=d.billing||(d.billing={flag:false,type:'',detail:''});
+  var opts=BILLING_TYPES.map(function(t){return'<option value="'+t+'" '+(bl.type===t?'selected':'')+'>'+t+'</option>';}).join('');
+  showModal(
+    '<h3>💳 ปัญหาค่ารักษาพยาบาล</h3>'
+    +'<div class="msub">เตียง '+p.bed+' | <strong>'+thaiDate(curDate)+'</strong></div>'
+    +'<div style="background:#EDE9FE;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:11px;color:#5b21b6;line-height:1.6">⚠ ประสานงานฝ่ายการเงิน/สิทธิ์การรักษาเพื่อดำเนินการต่อ</div>'
+    +'<div class="mf"><label>สถานะปัญหาค่ารักษา</label>'
+    +'<div style="display:flex;gap:8px">'
+    +'<div class="wb-btn wb-ok'+(bl.flag===false?' on':'')+'" style="flex:1" id="bl_no" onclick="selBL(false)">ไม่มีปัญหา</div>'
+    +'<div class="wb-btn wb-ng'+(bl.flag===true?' on':'')+'" style="flex:1" id="bl_yes" onclick="selBL(true)">⚠ มีปัญหา</div>'
+    +'</div></div>'
+    +'<div class="mf"><label>ประเภทปัญหา</label>'
+    +'<select id="bl_type" style="width:100%;font-size:12px;padding:5px 8px;border:0.5px solid #e2e4e9;border-radius:6px">'
+    +'<option value="">-- เลือกประเภท --</option>'+opts
+    +'</select></div>'
+    +'<div class="mf"><label>รายละเอียด / แนวทางแก้ไข</label>'
+    +'<textarea id="bl_detail" rows="3" style="width:100%;font-size:12px;padding:6px 8px;border:0.5px solid #e2e4e9;border-radius:6px;resize:vertical" placeholder="ระบุรายละเอียด หรือสถานะการดำเนินการ...">'+( bl.detail||'')+'</textarea></div>'
+    +'<div class="mft"><button class="btn" onclick="closeModal()">ยกเลิก</button><button class="btn" onclick="clrBL('+id+')">ล้างค่า</button><button class="btn btn-blue" onclick="saveBL('+id+')">บันทึก</button></div>'
+  );
+}
+var _blFlag=null;
+function selBL(val){_blFlag=val;var no=document.getElementById('bl_no'),yes=document.getElementById('bl_yes');if(no)no.className='wb-btn wb-ok'+(val===false?' on':'');if(yes)yes.className='wb-btn wb-ng'+(val===true?' on':'');}
+function saveBL(id){
+  var p=P.find(function(x){return x.id===id;});if(!p)return;
+  var d=getDay(p,curDate);
+  var flag=_blFlag!==null?_blFlag:false;
+  var type=document.getElementById('bl_type').value||'';
+  var detail=document.getElementById('bl_detail').value||'';
+  d.billing={flag:flag,type:type,detail:detail};
+  _blFlag=null;saveData();closeModal();render();
+}
+function clrBL(id){var p=P.find(function(x){return x.id===id;});if(p){getDay(p,curDate).billing={flag:false,type:'',detail:''};saveData();}closeModal();render();}
+
+
+
+initDateBar();
+
+// ---- Ward UI init ----
+(function(){
+  // Highlight active ward button
+  var styles={
+    active:{background:'#2563eb',color:'#ffffff',borderColor:'#2563eb'},
+    inactive:{background:'#ffffff',color:'#374151',borderColor:'#d1d5db'}
+  };
+  ['cheewarug'].forEach(function(wid){
+    var el=document.getElementById('ws-'+wid);
+    if(!el)return;
+    var s=wid===_wardId?styles.active:styles.inactive;
+    el.style.background=s.background;
+    el.style.color=s.color;
+    el.style.borderColor=s.borderColor;
+  });
+  // Set ward name in topbar subtitle
+  var sub=document.getElementById('ward-sub');
+  if(sub)sub.textContent=WARD.name;
+  // Set page title
+  document.title='Morning Round — ชีวรักษ์';
+})();
+
+renderDash();
+// Check Firebase connection
+setTimeout(function(){
+  var el=document.getElementById('sync-status');
+  if(el){
+    if(window.cloudReady){
+      el.innerHTML='☁️ Cloud sync';
+      el.style.background='rgba(16,185,129,.7)';
+      setTimeout(function(){el.style.opacity='0';el.style.transition='opacity 2s';},3000);
+    } else {
+      el.innerHTML='💾 Offline mode';
+      el.style.background='rgba(245,158,11,.7)';
+    }
+  }
+},2000);
+</script>
+</body>
+</html>
